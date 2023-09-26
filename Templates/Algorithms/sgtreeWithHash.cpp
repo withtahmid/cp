@@ -6,7 +6,7 @@ class SegmentTree {
 
 public:
   SegmentTree(const vector<T>&arr) {
-    this -> N = (int)arr.size() + 5;
+    this->N = (int)arr.size() + 5;
     nodes = new V[getSegmentTreeSize(this->N)];
     buildTree(arr, 1, 0, N-1);
   }
@@ -38,16 +38,14 @@ public:
   }
   
   V query(int stIndex, int left, int right, int lo, int hi) {
-    if (left == lo && right == hi){
+    if (left == lo && right == hi)
       return nodes[stIndex];
-    }
+        
     int mid = (left + right) / 2;
-    if (lo > mid){
+    if (lo > mid)
       return query(2*stIndex+1, mid+1, right, lo, hi);
-    }
-    if (hi <= mid){
+    if (hi <= mid)
       return query(2*stIndex, left, mid, lo, hi);
-    }
         
     V leftResult = query(2*stIndex, left, mid, lo, mid);
     V rightResult = query(2*stIndex+1, mid+1, right, mid+1, hi);
@@ -64,8 +62,8 @@ public:
   
   void update(int stIndex, int lo, int hi, int index, T value) {
     if (lo == hi) {
-    nodes[stIndex].assignLeaf(value);
-    return;
+        nodes[stIndex].assignLeaf(value);
+        return;
     }
     
     int left = 2 * stIndex, right = left + 1, mid = (lo + hi) / 2;
@@ -75,26 +73,48 @@ public:
     else{
       update(right, mid+1, hi, index, value);
     }
+    
     nodes[stIndex].merge(nodes[left], nodes[right]);
   }
 };
 
-/*************************************/ 
+/********/ 
+const ll p = 31, mod = LLONG_MAX;
+ll power(ll x, ll y){ 
+     ll val = 1;
+     while (y > 0){ 
+         if (y % 2 != 0) {
+             val = (val * x) % mod; 
+         }
+         y = y / 2; 
+         x = (x * x) % mod;
+     } 
+     return val; 
+ }
+/*******/ 
 
 struct Node{
     
-    long long sum;
+    ll fr, rv , len;
     
     void merge(Node a, Node b){
-        this -> sum = a.sum + b.sum;
+        if(a.len != 0 and b.len != 0){
+            this -> fr = (((power(p, a.len) * b.fr) % mod) + a.fr) % mod;
+            this -> rv = (((power(p, b.len) * a.rv) % mod) + b.rv) % mod;
+            this -> len = a.len + b.len;
+        }
+        else if(a.len == 0){
+            *this = b;
+        }
+        else{
+            *this = a;
+        }
     }
-
     Node query(){
         return *this;
     }
-
     void assignLeaf(auto val){
-        this -> sum = val;
+        fr = val, rv = val, len = 1;
     }
 };
 
