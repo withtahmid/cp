@@ -1,5 +1,17 @@
-Sun Sep 24 17:44:05 2023
+Tue Sep 26 16:58:29 2023
 
-
-
-Elapsed time: 0 millisecond
+8 
+Vector: Size: 10
+[
+	v[0]: 0
+	v[1]: 0
+	v[2]: 0
+	v[3]: 0
+	v[4]: 0
+	v[5]: 0
+	v[6]: 0
+	v[7]: 0
+	v[8]: 0
+	v[9]: 0
+]
+Returned with exit code 0 
