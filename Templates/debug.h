@@ -5,7 +5,7 @@ typedef int_fast64_t ll;
 #include<ext/pb_ds/assoc_container.hpp>
 #include<ext/pb_ds/tree_policy.hpp>
 using namespace __gnu_pbds;
-template<class T>
+template<class T> 
 using ordered_set = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_order_statistics_node_update>;
 // #define debug(...) cerr<<"[" << #__VA_ARGS__ <<"] --> "; full_debug(__VA_ARGS__); cerr << endl
 /////////////////////////////
@@ -14,7 +14,7 @@ const string input_file = "input.txt";
 const string output_file = "output.txt";
 const string error_file = "error.txt";
 
-const string __elapsed__ = "\nReturned with exit code 0";
+// const string __elapsed__ = "\nReturned with exit code 0";
 
 auto starttime = chrono::steady_clock::now();
 // struct rusage usage;
@@ -25,12 +25,11 @@ void init(){
     time_t Time; time(&Time);cerr << ctime(&Time) << endl;
 }
 
-
-    // Memory usage is in kilobytes (KB)
-
-
-
-
+string __elapsed__(){
+	cerr << "\n\nElapsed time: " << chrono::duration_cast<chrono::milliseconds>
+    (chrono::steady_clock::now() - starttime).count() << " millisecond";
+    return "";
+}
 void full_debug(int x){cerr << x;}
 void full_debug(int_fast64_t x){cerr << x;}
 void full_debug(unsigned long long x){cerr << x; }
@@ -40,11 +39,10 @@ void full_debug(double x){cerr << x;}
 void full_debug(long double x){cerr << x;}
 ///
 
-
 // data stractures
 template<class T,class V>
-void full_debug(pair<T,V> x)
-{
+void full_debug(pair<T,V> x) 
+{ 
 	cerr << "{";
 	full_debug(x.first);
 	cerr << ",";
@@ -99,8 +97,8 @@ void full_debug(multiset<T>s){
 	cerr <<"\n]";
 }
 template<class T,class V>
-void full_debug(map<T,V>m)
-{
+void full_debug(map<T,V>m) 
+{ 
 	cerr<<"Map: " << "Size: "<<m.size()<<endl;
 	cerr << "{\n";
 	ll indx = 0;
@@ -116,8 +114,8 @@ void full_debug(map<T,V>m)
 	cerr << "\n}";
 }
 template<class T>
-void full_debug(stack<T>stk)
-{
+void full_debug(stack<T>stk) 
+{ 
 	cerr<<"Stack: " << "Size: "<<stk.size()<<endl;
 	cerr << "[ \n";
 	int i = 0;
@@ -129,7 +127,7 @@ void full_debug(stack<T>stk)
 		else{
 			cerr<<"\t\t ";
 		}
-
+		
 		full_debug(stk.top());cerr <<"\t i: "<<i<<"\t";
 		cerr<<"\t|";
 		cerr <<"\n";
@@ -139,8 +137,8 @@ void full_debug(stack<T>stk)
 	cerr << "\n]";
 }
 template<class T>
-void full_debug(queue<T>Q)
-{
+void full_debug(queue<T>Q) 
+{ 
 	cerr<<"Deque: " << "Size: "<<Q.size()<<endl;
 	cerr << "[ \n";
 	int i = 0;
@@ -152,7 +150,7 @@ void full_debug(queue<T>Q)
 		else{
 			cerr<<"\t\t ";
 		}
-
+		
 		full_debug(Q.front());cerr <<"\t i: "<<i<<"\t";
 		cerr<<"\t|";
 		cerr <<"\n";
@@ -162,12 +160,12 @@ void full_debug(queue<T>Q)
 	cerr << "\n]";
 }
 template<class T>
-void full_debug(deque<T>Q)
-{
+void full_debug(deque<T>Q) 
+{ 
 	cerr<<"Deque: " << "Size: "<<Q.size()<<endl;
 	cerr << "[\n";
 	int i = 0;
-	int n = Q.size();
+	int n = Q.size(); 
 	while(!Q.empty()){
 		cerr<<"\t| ";
 		if(!i){
@@ -179,7 +177,7 @@ void full_debug(deque<T>Q)
 		else{
 			cerr<<"\t\t ";
 		}
-
+		
 		full_debug(Q.front()); cerr <<"\t i: "<<i<<"\t";
 		cerr<<"\t|";
 		cerr <<"\n";
@@ -199,23 +197,10 @@ void _debug(char x){ cerr << x; }
 void _debug(string x){ cerr << x; }
 void _debug(double x){ cerr << x; }
 void _debug(long double x){ cerr << x;}
-///
-template<class T>
-void _debug(T x, int mode){
-
-	if(!mode){
-		cerr << "\n-------------start---------------\n";
-		full_debug(x);
-		cerr << "\n--------------end----------------\n";
-	}
-	else{
-		cerr<<"Pass '0' as parameter for full_debug\n";
-	}
-}
 // data stractures
 template<class T,class V>
-void _debug(pair<T,V> x)
-{
+void _debug(pair<T,V> x) 
+{ 
 	cerr << "{";
 	_debug(x.first);
 	cerr << ",";
@@ -269,8 +254,8 @@ void _debug(ordered_set<T>s){
 }
 
 template<class T,class V>
-void _debug(map<T,V>m)
-{
+void _debug(map<T,V>m) 
+{ 
 	cerr << "{ ";
 	for(auto i : m)
 	{
@@ -283,8 +268,8 @@ void _debug(map<T,V>m)
 	cerr << " }";
 }
 template<class T>
-void _debug(stack<T>stk)
-{
+void _debug(stack<T>stk) 
+{ 
 	cerr << "[ top -> ";
 	while(!stk.empty()){
 		_debug(stk.top());
@@ -294,8 +279,8 @@ void _debug(stack<T>stk)
 	cerr << " ]";
 }
 template<class T>
-void _debug(queue<T>stk)
-{
+void _debug(queue<T>stk) 
+{ 
 	cerr << "[ frnt -> ";
 	while(!stk.empty()){
 		_debug(stk.front());
@@ -315,10 +300,7 @@ void dbg(T value, Args... args) {
 	dbg(args...);
 }
 
-
 char debugsep = '\n';
-
-
 
 void debug(){
 	cerr << endl;
