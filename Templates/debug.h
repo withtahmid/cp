@@ -1,6 +1,6 @@
 #include<bits/stdc++.h>
 using namespace std;
-typedef int_fast64_t ll;
+typedef long long ll;
 #include<bits/stdtr1c++.h>
 #include<ext/pb_ds/assoc_container.hpp>
 #include<ext/pb_ds/tree_policy.hpp>
@@ -31,13 +31,14 @@ string __elapsed__(){
     return "";
 }
 void full_debug(int x){cerr << x;}
-void full_debug(int_fast64_t x){cerr << x;}
+void full_debug(long long x){cerr << x;}
 void full_debug(unsigned long long x){cerr << x; }
 void full_debug(char x){cerr << x;}
 void full_debug(string x){cerr << x;}
 void full_debug(double x){cerr << x;}
 void full_debug(long double x){cerr << x;}
 ///
+
 
 // data stractures
 template<class T,class V>
@@ -191,12 +192,25 @@ void full_debug(deque<T>Q)
 
 // premitive types
 void _debug(int x){ cerr << x; }
-void _debug(int_fast64_t x){ cerr << x; }
+void _debug(long long x){ cerr << x; }
 void _debug(unsigned long long x){ cerr << x; }
 void _debug(char x){ cerr << x; }
 void _debug(string x){ cerr << x; }
 void _debug(double x){ cerr << x; }
 void _debug(long double x){ cerr << x;}
+///
+template<class T>
+void _debug(T x, int mode){
+
+	if(!mode){
+		cerr << "\n-------------start---------------\n";
+		full_debug(x);
+		cerr << "\n--------------end----------------\n";
+	}
+	else{
+		cerr<<"Pass '0' as parameter for full_debug\n";
+	}
+}
 // data stractures
 template<class T,class V>
 void _debug(pair<T,V> x) 
@@ -300,7 +314,10 @@ void dbg(T value, Args... args) {
 	dbg(args...);
 }
 
+
 char debugsep = '\n';
+
+
 
 void debug(){
 	cerr << endl;
@@ -310,3 +327,7 @@ void debug(T value, Args... args) {
 	full_debug(value); cerr << debugsep;
 	debug(args...);
 }
+
+
+
+
