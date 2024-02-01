@@ -1,6 +1,7 @@
 /**
  *
  * Author: withtahmid
+ * Created: 2024-01-27 20:30:43
  *
  **/
 #include <bits/stdc++.h>
@@ -36,7 +37,7 @@ signed main(){
     cin.tie(NULL); cout.tie(NULL);
     dbg(__init__());
     precompute();
-    bool test_case = not true;
+    bool test_case = true;
     int tc = 1; if(test_case){read(tc);}
     for(int i = 1; i <= tc; ++i){
         dbg(__case__(i));
@@ -51,5 +52,17 @@ const int oo = INT_MAX;
 const ll OO = LLONG_MAX;
 void precompute(){}
 void solve([[maybe_unused]] const int case_no){
-    
+    int x, n;
+    read(x, n);
+    vector<int>d;
+    for(int i = 1; i * i <= x; ++i){
+        if(x % i != 0){
+            continue;
+        }
+        d.pb(i);
+        d.pb(x / i);
+    }
+    sort(all(d));
+    int divi = *lower_bound(all(d), n);
+    println(x / divi);
 }

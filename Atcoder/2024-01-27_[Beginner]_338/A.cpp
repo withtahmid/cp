@@ -1,6 +1,7 @@
 /**
  *
  * Author: withtahmid
+ * Created: 2024-01-27 17:58:00
  *
  **/
 #include <bits/stdc++.h>
@@ -51,5 +52,17 @@ const int oo = INT_MAX;
 const ll OO = LLONG_MAX;
 void precompute(){}
 void solve([[maybe_unused]] const int case_no){
-    
+    string str;
+    read(str);
+    if('A' <= str[0] and str[0] <= 'Z'){
+        for(int i = 1; i < len(str); ++i){
+            if('A' <= str[i] and str[i] <= 'Z'){
+                println("No");
+                return;
+            }
+        }
+        println("Yes");
+    }else{
+        println("No");
+    }
 }

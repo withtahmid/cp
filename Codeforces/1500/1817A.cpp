@@ -17,7 +17,6 @@ using namespace std;
 #endif
 #define endl '\n'
 #define pb push_back
-#define pf push_front
 #define all(v) v.begin(),v.end()
 #define len(v) ((int) v.size())
 #define has(x, y) (x.find(y) != x.end())
@@ -51,5 +50,26 @@ const int oo = INT_MAX;
 const ll OO = LLONG_MAX;
 void precompute(){}
 void solve([[maybe_unused]] const int case_no){
-    
+    int n, q;
+    read(n, q);
+    vector<int>v(n);
+    read(v);
+    deque<int>pf(n);
+    for(int i = 1; i + 1 < n; ++i){
+        pf[i] = (v[i - 1] >= v[i] and v[i] >= v[i + 1] ? 1 : 0);
+    }
+    for(int i = 1; i < len(pf); ++i){
+        pf[i] += pf[i - 1];
+    }
+    while(q--){
+        int l, r;
+        read(l, r);
+        int ln  = (r - l  + 1);
+        if(ln < 3){
+            println(ln);
+        }else{
+            int rm = pf[r - 2] - pf[l - 1];
+            println(ln - rm);
+        }
+    }
 }

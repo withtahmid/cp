@@ -36,7 +36,7 @@ signed main(){
     cin.tie(NULL); cout.tie(NULL);
     dbg(__init__());
     precompute();
-    bool test_case = not true;
+    bool test_case = true;
     int tc = 1; if(test_case){read(tc);}
     for(int i = 1; i <= tc; ++i){
         dbg(__case__(i));
@@ -45,11 +45,27 @@ signed main(){
     dbg(__elapsed__());
     return 0;
 }
-const int maxn = (1 * 1e5) + 69;
+const int maxn = (2 * 1e5) + 69;
 const int mod = (1e9 + 7);
 const int oo = INT_MAX;
 const ll OO = LLONG_MAX;
 void precompute(){}
 void solve([[maybe_unused]] const int case_no){
-    
+    int n;
+    read(n);
+    vector<int>v(n);
+    read(v);
+    vector<int>idx(maxn, -1);
+    vector<int>dp(n + 1);
+    dp[0] = 0;
+    for(int i = 1; i <= n; ++i){
+        dp[i] = dp[i - 1];
+        if(idx[v[i - 1]] != -1){
+            const auto& last = idx[v[i - 1]];
+            dp[i] = max(dp[i], i - last + 1 + dp[last - 1]);
+            dp[i] = max(dp[i], i - last + dp[last]);
+        }
+        idx[v[i - 1]] = i;
+    }
+    println(dp[n]);
 }

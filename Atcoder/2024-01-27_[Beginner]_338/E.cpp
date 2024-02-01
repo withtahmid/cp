@@ -1,6 +1,7 @@
 /**
  *
  * Author: withtahmid
+ * Created: 2024-01-27 17:58:00
  *
  **/
 #include <bits/stdc++.h>
@@ -29,6 +30,8 @@ inline void println(const auto &...a) {print(a..., '\n');}
 inline bool read(auto &...a) {return (((cin >> a) ? true : false) && ...);}
 inline void read(pair<auto, auto>& p){read(p.first, p.second);}
 inline void read(vector<auto>& v) {for(auto& i : v){read(i);}}
+template<class T>b
+using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 void solve(int);
 void precompute();
 signed main(){
@@ -51,5 +54,24 @@ const int oo = INT_MAX;
 const ll OO = LLONG_MAX;
 void precompute(){}
 void solve([[maybe_unused]] const int case_no){
-    
+    ordered_set<int>st;
+    int n;
+    read(n);
+    vector<pii>v(n);
+    read(v);
+    for(auto& i : v){
+        if(i.first > i.second){
+            swap(i.first, i.second);
+        }
+    }
+    sort(all(v));
+    for(auto& i : v){
+        if(st.order_of_key(i.first) != st.order_of_key(i.second)){
+            println("Yes");
+            return;
+        }
+        st.insert(i.first);
+        st.insert(i.second);
+    }
+    println("No");
 }

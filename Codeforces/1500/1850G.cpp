@@ -31,12 +31,12 @@ inline void read(pair<auto, auto>& p){read(p.first, p.second);}
 inline void read(vector<auto>& v) {for(auto& i : v){read(i);}}
 void solve(int);
 void precompute();
-signed main(){
+int main(){
     ios_base::sync_with_stdio(false);
     cin.tie(NULL); cout.tie(NULL);
     dbg(__init__());
     precompute();
-    bool test_case = not true;
+    bool test_case = true;
     int tc = 1; if(test_case){read(tc);}
     for(int i = 1; i <= tc; ++i){
         dbg(__case__(i));
@@ -51,5 +51,21 @@ const int oo = INT_MAX;
 const ll OO = LLONG_MAX;
 void precompute(){}
 void solve([[maybe_unused]] const int case_no){
-    
+    int n;
+    read(n);
+    vector<pair<ll, ll>>v(n);
+    read(v);
+    const int ub = (2 * 1e9) + 10;
+    map<ll, int>diff_x, diff_y, x, y;
+    for(const auto& p : v){
+        ++ x[p.first], ++y[p.second];
+        ++ diff_x[p.first - p.second], ++ diff_y[(ub - p.first) - p.second];
+    }
+    ll res = 0LL;
+    for(const auto& p : v){
+        res += (x[p.first] - 1) + (y[p.second] - 1);
+        res += diff_x[p.first - p.second] - 1;
+        res += diff_y[(ub - p.first) - p.second] - 1;
+    }
+    println(res);
 }

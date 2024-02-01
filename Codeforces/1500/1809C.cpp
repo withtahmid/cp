@@ -51,5 +51,8 @@ const int oo = INT_MAX;
 const ll OO = LLONG_MAX;
 void precompute(){}
 void solve([[maybe_unused]] const int case_no){
-    
+    int n, k;
+    read(n, k);
+    // if(k <= )
+
 }

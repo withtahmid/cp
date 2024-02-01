@@ -1,6 +1,7 @@
 /**
  *
  * Author: withtahmid
+ * Created: 2024-01-27 17:58:00
  *
  **/
 #include <bits/stdc++.h>
@@ -15,6 +16,7 @@ using namespace std;
 #define debug(...)
 #define dbg(...)
 #endif
+#define int long long
 #define endl '\n'
 #define pb push_back
 #define pf push_front
@@ -51,5 +53,40 @@ const int oo = INT_MAX;
 const ll OO = LLONG_MAX;
 void precompute(){}
 void solve([[maybe_unused]] const int case_no){
+    int n, m;
+    read(n, m);
+    vector<int>x(m);
+    read(x);
+    for(auto& i : x){
+        --i;
+    }
     
+    const auto dist = [&](auto f, auto t) -> int{
+        if(f <= t){
+            return t - f;
+        }
+        return t + n - f;
+    };
+    vector<ll>v(n + 1);
+    const auto add = [&](auto f, auto t, auto num){
+        if(f <= t){
+            v[f] += num;
+            v[t] -= num;
+        }else{
+            v[f] += num;
+            v[n] -= num;
+            v[0] += num;
+            v[t] -= num;
+        }
+    };
+    for(int i = 0; i + 1 < m; ++i){
+        add(x[i], x[i + 1], dist(x[i + 1], x[i]));
+        add(x[i + 1], x[i], dist(x[i], x[i + 1]));
+    }
+    dbg(v);
+    for(int i = 0; i < n; ++i){
+        v[i+1] += v[i];
+    }
+    dbg(v);
+    println(*min_element(v.begin(), v.end() - 1));
 }

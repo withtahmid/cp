@@ -36,7 +36,7 @@ signed main(){
     cin.tie(NULL); cout.tie(NULL);
     dbg(__init__());
     precompute();
-    bool test_case = not true;
+    bool test_case = true;
     int tc = 1; if(test_case){read(tc);}
     for(int i = 1; i <= tc; ++i){
         dbg(__case__(i));
@@ -51,5 +51,29 @@ const int oo = INT_MAX;
 const ll OO = LLONG_MAX;
 void precompute(){}
 void solve([[maybe_unused]] const int case_no){
-    
+    int n;
+    read(n);
+    vector<int>v(n);
+    read(v);
+
+    const auto fn = [&](int m){
+        vector<int>temp;
+        for(int i = 0; i < n; ++i){
+            if(v[i] > m and v[i] <= (n - m)){
+                temp.pb(v[i]);
+            }
+        }
+        return is_sorted(all(temp));
+    };
+
+    int l = 0, r = n;
+    while(l <= r){
+        int mid = l + (r - l) / 2;
+        if(fn(mid)){
+            r = mid - 1;
+        }else{
+            l = mid + 1;
+        }
+    }
+    println(r + 1);
 }

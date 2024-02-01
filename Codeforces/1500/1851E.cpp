@@ -31,12 +31,12 @@ inline void read(pair<auto, auto>& p){read(p.first, p.second);}
 inline void read(vector<auto>& v) {for(auto& i : v){read(i);}}
 void solve(int);
 void precompute();
-signed main(){
+int main(){
     ios_base::sync_with_stdio(false);
     cin.tie(NULL); cout.tie(NULL);
     dbg(__init__());
     precompute();
-    bool test_case = not true;
+    bool test_case = true;
     int tc = 1; if(test_case){read(tc);}
     for(int i = 1; i <= tc; ++i){
         dbg(__case__(i));
@@ -45,11 +45,49 @@ signed main(){
     dbg(__elapsed__());
     return 0;
 }
-const int maxn = (1 * 1e5) + 69;
+const int maxn = (2 * 1e5) + 69;
 const int mod = (1e9 + 7);
 const int oo = INT_MAX;
 const ll OO = LLONG_MAX;
+ll dp[maxn];
 void precompute(){}
-void solve([[maybe_unused]] const int case_no){
+ll cost_fn(int n, const vector<vector<int>>& recipy, const vector<int>& v){
+    if(dp[n] != -1){
+        return dp[n];
+    }
+    if(len(recipy[n]) == 0){
+        return dp[n] = v[n];
+    }
+    ll res = 0;
+    for(auto& i : recipy[n]){
+        res += cost_fn(i, recipy, v);
+    }
     
+    return dp[n] = min(res, (ll)v[n]);
+}
+void solve([[maybe_unused]] const int case_no){
+    int n, k;
+    read(n, k);
+    vector<int>v(n + 1);
+    for(int i = 1; i <= n; ++i){
+        read(v[i]);
+    }
+    for(int i = 0; i < k; ++i){
+        int in;
+        read(in);
+        v[in] = 0;
+    }
+
+    vector<vector<int>>recipy(n + 1);
+    for(int i = 1; i <= n; ++i){
+        int sz;
+        read(sz);
+        recipy[i].resize(sz);
+        read(recipy[i]);
+    }
+    memset(dp, -1, sizeof(dp));
+    for(int i = 1; i <= n; ++i){
+        print(cost_fn(i, recipy, v), " ");
+    }
+    println();
 }

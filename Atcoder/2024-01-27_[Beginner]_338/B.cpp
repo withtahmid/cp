@@ -1,6 +1,7 @@
 /**
  *
  * Author: withtahmid
+ * Created: 2024-01-27 17:58:00
  *
  **/
 #include <bits/stdc++.h>
@@ -51,5 +52,20 @@ const int oo = INT_MAX;
 const ll OO = LLONG_MAX;
 void precompute(){}
 void solve([[maybe_unused]] const int case_no){
-    
+    string str;
+    read(str);
+    map<char, int>cnt;
+    for(auto c : str){
+        ++cnt[c];
+    }
+    int mx = 0;
+    for(auto [key, val]: cnt){
+        mx = max(mx, val);
+    }
+    for(auto [key, val] : cnt){
+        if(val == mx){
+            println(key);
+            return;
+        }
+    }
 }

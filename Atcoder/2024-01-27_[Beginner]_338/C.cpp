@@ -1,6 +1,7 @@
 /**
  *
  * Author: withtahmid
+ * Created: 2024-01-27 17:58:00
  *
  **/
 #include <bits/stdc++.h>
@@ -51,5 +52,39 @@ const int oo = INT_MAX;
 const ll OO = LLONG_MAX;
 void precompute(){}
 void solve([[maybe_unused]] const int case_no){
-    
+    int n;
+    read(n);
+    vector<int> q(n), a(n), b(n);
+    read(q);
+    read(a);
+    read(b);
+    dbg(q, a, b);
+    auto cnt = [&](const auto& x) -> int{
+        int x_cnt = oo;
+        for(int i = 0; i < n; ++i){
+            if(x[i] == 0) continue;
+            x_cnt = min(x_cnt, q[i] / x[i]);
+        }
+        return x_cnt;
+    };
+    int a_cnt = cnt(a);
+    auto cal = [&](int taken) -> int{
+        auto v = q;
+        for(int i = 0; i < n; ++i){
+            v[i] -= (taken * a[i]);
+        }
+        int y_cnt = oo;
+        for(int i = 0; i < n; ++i){
+            if(b[i] == 0) continue;
+            y_cnt = min(y_cnt, v[i] / b[i]);
+        }
+        return (taken + y_cnt);
+    };
+
+    int res = -1;
+    for(int i = 0; i <= a_cnt; ++i){
+        res = max(res, cal(i));
+    }
+    println(res);
+
 }

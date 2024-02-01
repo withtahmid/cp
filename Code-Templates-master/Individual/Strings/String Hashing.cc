@@ -17,6 +17,7 @@ void compute_hash(string s) {
     rev[n - 1 - i] = rh;
   }
 }
+
 int64_t get_fwd_hash(int l, int r) {
   int64_t h = 0;
   h = (fwd[r] - (l > 0 ? fwd[l - 1] * expo[r - l + 1] : 0)) % M;
