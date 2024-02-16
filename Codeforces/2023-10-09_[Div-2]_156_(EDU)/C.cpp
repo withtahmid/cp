@@ -5,65 +5,78 @@
  *
  **/
 #include <bits/stdc++.h>
+#include<ext/pb_ds/assoc_container.hpp>
+#include<ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
 using namespace std;
-#ifdef LOCAL
+#ifdef LOCAL 
 #include <debug.h>
 #else
+#define local(...) 
 #define debug(...)
 #define dbg(...)
-#define init(...)
 #endif
-#define endl '\n'
 #define pb push_back
 #define all(v) v.begin(),v.end()
 #define len(v) ((int) v.size())
-#define mem(x, y) memset(x, y, sizeof(x))
-typedef int_fast64_t ll;
+#define has(x, y) (x.find(y) != x.end())
+#define dec(x) setprecision(x)
+typedef long long ll;
 typedef long double ld;
 typedef pair<int, int> pii;
-typedef vector<int> vi;
-inline constexpr auto _max(const auto f, const auto... r){return max({f, r...});}
-inline constexpr auto _min(const auto f, const auto... r){return min({f, r...});}
-inline void operator>>(istream& istream, vector<auto>&v){for(auto& i:v){cin>>i;}}
+inline void print(const auto& a){cout<<a;}
+inline void print(const vector<auto>& v){for(auto&i:v){print(i);print(" ");}}
+inline void print(const auto &...a) {((print(a)), ...);}
+inline void println(const auto &...a) {print(a..., '\n');}
+inline bool read(auto& x){return(cin >> x) ? true : false;}
+inline bool read(pair<auto, auto>& p){ return (read(p.first) and read(p.second));}
+inline bool read(vector<auto>& v) {bool x = true; for(auto&i:v){x&=read(i);} return x;}
+inline bool read(auto &...a) {return (((read(a))?true:false)&&...);}
+template<class T>
+using _set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 void solve(int);
 void precompute();
-int main(){
+signed main(){
     ios_base::sync_with_stdio(false);
     cin.tie(NULL); cout.tie(NULL);
-    init();
+    dbg(__init__());
     precompute();
     bool test_case = true;
-    int tc = 1; if(test_case){cin >> tc;}
+    int tc = 1; if(test_case){read(tc);}
     for(int i = 1; i <= tc; ++i){
+        dbg(__case__(i));
         solve(i);
     }
-    cout << endl;
     dbg(__elapsed__());
+    return 0;
 }
+const int maxn5 = (1 * 1e5) + 69;
+const int maxn6 = (1 * 1e6) + 69;
+const int mod7 = (1e9 + 7);
+const int mod9 = 998244353;
+const int oo = INT_MAX;
+const  ll OO = LLONG_MAX;
 void precompute(){}
-void solve(const int case_no){
-    
-    string str;
-    cin >> str;
-    int x;
-    cin >> x;
-    int n = len(str);
-    int itr = len(str);
-    int prev = 0;
-    int som = 0;
-    int p = 1;
-    while(n < x){
-        som += itr;
-        --itr;
-        n += itr;
-        ++p;
+void brutforce(){}
+void solve([[maybe_unused]] const int case_no){
+   string s;
+   ll pos;
+   read(s, pos);
+   --pos;
+   int curLen = len(s);
+   vector<char>st;
+   bool ok = pos < curLen;
+   s += '$';
+    for(const auto& c : s){
+        while(not ok and len(st) > 0 and st.back() > c){
+            pos -= curLen;
+            -- curLen;
+            st.pop_back();
+            if(pos < curLen){
+                ok = true;
+            }
+        }
+        st.push_back(c);
     }
-
-    if(p == len(str) and len(str) > 1){
-        cout << min(str[0], str[1]);
-        return;
-    }
-    
-    int indx = x - som;
-    cout << str[indx-1];
+    print(st[pos]);
 }

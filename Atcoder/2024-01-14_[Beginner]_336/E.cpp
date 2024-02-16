@@ -1,40 +1,44 @@
 /**
  *
  * Author: withtahmid
- * Created: 2024-01-14 17:58:55
  *
  **/
 #include <bits/stdc++.h>
+#include<ext/pb_ds/assoc_container.hpp>
+#include<ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
 using namespace std;
-#ifdef LOCAL
+#ifdef LOCAL 
 #include <debug.h>
 #else
+#define local(...) 
 #define debug(...)
 #define dbg(...)
-#define init(...)
 #endif
-#define endl '\n'
 #define pb push_back
 #define all(v) v.begin(),v.end()
 #define len(v) ((int) v.size())
 #define has(x, y) (x.find(y) != x.end())
+#define decimal(x) setprecision(x)
 typedef long long ll;
 typedef long double ld;
 typedef pair<int, int> pii;
-inline auto _max(const auto f, const auto... r){return max({f, r...});}
-inline auto _min(const auto f, const auto... r){return min({f, r...});}
-inline void print(const auto &...a) { ((cout << a), ...); }
-inline void println(const auto &...a) { print(a..., '\n'); }
-inline bool read(auto &...a) { return (((cin >> a) ? true : false) && ...);}
-inline void read(pair<auto, auto>& p){read(p.first, p.second);}
-inline void read(vector<auto>& v) {for(auto& i : v){read(i);}}
-inline void read(deque<auto>& v) {for(auto& i : v){read(i);}}
+inline void print(const auto& a){cout<<a;}
+inline void print(const vector<auto>& v){for(auto&i:v){print(i);print(" ");}}
+inline void print(const auto &...a) {((print(a)), ...);}
+inline void println(const auto &...a) {print(a..., '\n');}
+inline bool read(auto& x){return(cin >> x) ? true : false;}
+inline bool read(pair<auto, auto>& p){ return (read(p.first) and read(p.second));}
+inline bool read(vector<auto>& v) {bool x = true; for(auto&i:v){x&=read(i);} return x;}
+inline bool read(auto &...a) {return (((read(a))?true:false)&&...);}
+template<class T>
+using _set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 void solve(int);
 void precompute();
-int main(){
+signed main(){
     ios_base::sync_with_stdio(false);
     cin.tie(NULL); cout.tie(NULL);
-    init();
+    dbg(__init__());
     precompute();
     bool test_case = not true;
     int tc = 1; if(test_case){read(tc);}
@@ -43,72 +47,55 @@ int main(){
         solve(i);
     }
     dbg(__elapsed__());
+    return 0;
 }
-const int maxn = (1 * 1e5) + 69;
-const int mod = (1e9 + 7);
+const int maxn5 = (1 * 1e5) + 69;
+const int maxn6 = (1 * 1e6) + 69;
+const int mod7 = (1e9 + 7);
+const int mod9 = 998244353;
 const int oo = INT_MAX;
 const ll OO = LLONG_MAX;
 void precompute(){}
-const int mxd = 15;
-ll dp[mxd][mxd * 10];
-ll possible[mxd];
-ll fn(int i, int sum, vector<int>v){
-    if(i < 1){
-        if(sum == 0) return 0;
-        ll dig = 0;
-        for(auto x : v){
-            dig = (dig * 10 + x) % sum;
+void brutforce(){}
+
+const int maxsum = (9 * 14);
+const int maxn = 15;
+ll dp[maxn][maxsum][maxsum][2];
+
+ll fn(const auto& s, int i, int sum, int mod, int small){
+    if(i == len(s)){
+        dbg(i, sum, mod);
+        return (sum == 0) ? 1LL : 0LL;
+    }
+    auto& res = dp[i][sum][mod][small];
+    if(res != -1LL){
+        return res;
+    }
+    res = 0LL;
+    if(small){
+        for(int d = (i == 0 ? 1 : 0); d <= 9; ++d){
+            res += fn(s, i + 1, (sum + d) % mod, mod, 1);
         }
-        return (dig == 0 ? 1 : 0);
-    }
-    if(dp[i][sum] != -1){
-        return dp[i][sum];
-    }
-    ll tot = 0;
-    for(int d = 0; d < 10; ++d){
-        auto t = v;
-        t.pb(d);
-        ll ret = fn(i - 1, sum + d, t);
-        tot += ret;
-        if(sum == 0){
-            possible[i] = ret;
+    }else{
+        for(int d = (i == 0 ? 1 : 0); d < int(s[i] - '0'); ++d){
+            res += fn(s, i + 1, (sum + d) % mod, mod, 1);
         }
+        int d = int(s[i] - '0');
+        res += fn(s, i + 1, (sum + d) % mod, mod, 0);
     }
-    // dbg(i, tot);
-    return dp[i][sum] = tot;
+    return res;
 }
-void solve(const int case_no){
-    memset(dp, -1, sizeof(dp));
-    fn(14, 0, vector<int>());
-    dbg();
-    int cnt = 0;
-    for(int i = 1; i < 1000; ++i){
-        int temp = i;
-        int sum = 0;
-        while(temp > 0){
-            sum += temp % 10;
-            temp /= 10;
-        }
-        if(i % sum == 0){
-            ++cnt;
-        }
-    }
-    dbg();
-    // string str;
-    // read(str);
-    // ll res = 0LL;
-    // for(int i = 1; i < len(str); ++i){
-    //     res += dp[i][0];
+
+void solve([[maybe_unused]] const int case_no){
+    string s;
+    read(s);
+    memset(dp, -1LL, sizeof(dp));
+    ll res = 0LL;
+    // for(int i = 2; i <= maxsum; ++i){
+    //     res += fn(s, 0, 0, i, 0);
     // }
-    // int dig_sum = str[0] - '0';
-    // for(int i = 1; i < len(str); ++i){
-    //     dig_sum += str[i] - '0';
-    //     for(int j = 0; i < str[i] - '0'; ++j){
-    //         res += dp[len(str) - j][dig_sum + j];
-    //     }
-    // }
-    // for(int i = 1; i < str[0] - '0'; ++i){
-    //     res += dp[len(str)][i];
-    // }
-    // println(res);
+    dbg(fn(s, 0, 0, 1, 0));
+    
+    println(res);
+
 }

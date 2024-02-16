@@ -118,12 +118,14 @@ folders = {
 	"vj": "Vjudge",
 	"rn": "Random",
 	"ps": "NSUPS",
-	"rn": "Random"
+	"rn": "Random",
+	"cc": "CodeChef"
   }
 types = {
 	"cf": {"1":"Div-1", "2": "Div-2", "3":"Div-3", "4": "Div-4"},
 	"at": {"b": "Beginner", "r": "Regular"},
-	"ps": {"i": "Individual", "t":"Team", "d": "Discussion"}
+	"ps": {"i": "Individual", "t":"Team", "d": "Discussion"},
+	"cc": {"s": "Starter"}
 }
 purposes = {
 	"clear": "clear"

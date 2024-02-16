@@ -1,163 +1,194 @@
-#include<bits/stdc++.h>
-using namespace std;
-class point{
-public:
-	int i,j;
-	point(){
-		i = -1; j = -1;
-	}
-	point(int x, int y){
-		i = x; j = y;
-	}
-	point operator+(point const a){
-		return point(a.i+i, a.j+j);
-	}
-	bool operator==(point const a){
-		return a.i == i and a.j == j;
-	}
-	bool valid(){
-		return i != -1 and j != -1;
-	}
-};
+
+/******************/ 
 template<class T>
-class Grid
-{
-	vector<vector<T>>grid;
-	vector<vector<int>>vis;
-	vector<vector<int>>dist;
-	int h, w;
-	bool v, d;
+class Grid{
+private:
+    map<string, pair<int, int>> direction_words = {
+        { "L",   { +0, -1 } },{ "R",   {  0, +1 } }, 
+        { "U",   { -1, +0 } },{ "D",   { +1, +0 } },
+        { "TL",  { -1, -1 } },{ "TR",  { -1, +1 } }, 
+        { "BL",  { +1, -1 } },{ "BR",  { +1, +1 } },
+
+        { "W",   { +0, -1 } },{ "E",   {  0, +1 } },
+        { "N",   { -1, +0 } },{ "S",   { +1, +0 } },
+        { "NW",  { -1, -1 } },{ "NE",  { -1, +1 } },
+        { "SW",  { +1, -1 } },{ "SE",  { +1, +1 } }
+    };
+    vector<vector<T>>grid;
+    int H = 0, W = 0;
+    vector<int> x_dir = {  0, -1,  0, +1 };
+    vector<int> y_dir = { -1,  0, +1,  0 };
 public:
-	Grid(){
-		h = 0;
-		w = 0;
-	}
-	Grid(int n, int m){
-		h = n; w = m;
-		grid.resize(n, vector<T>(m));
-		v = false;d = false;
-	}
-	void resize(int n, int m){
-		grid.clear();
-		h = n; w = m;
-		grid.resize(n, vector<T>(m));
-		if(v){vis.resize(h, vector<int>(w, 0));}
-		if(d){dist.resize(h, vector<int>(w, -1));}
-	}
-	void make_visit(int val){
-		if(v){
-			for(auto& i : vis){
-				fill(i.begin(), i.end(), val);
-			}
-			return;
-		}
-		v = true;vis.resize(h, vector<int>(w, val));
-	}
-	void make_distance(int val){
-		if(d){
-			for(auto& i : dist){
-				fill(i.begin(), i.end(), val);
-			}
-			return;
-		}
-		d = true;
-		dist.resize(h, vector<int>(w, val));
-	}
-	void read(){
-		for(int i = 0; i < h; ++i){
-			for(int j = 0; j < w; ++j){
-				cin >> grid[i][j];
-			}
-		}
-	}
-	void clear(){
-		for(T& i : grid){
-			i.claer();
-		}
-		grid.claer();
-	}
-	void print(string separator){
-		for(int i = 0; i < h; ++i){
-			for(int j = 0; j < w; ++j){
-				cout << grid[i][j] <<separator;
-			}
-			cout << endl;
-		}
-		cout << endl;
-	}
-	void print_dis(){
-		for(int i = 0; i < h; ++i){
-			for(int j = 0; j < w; ++j){
-				cout << dist[i][j] <<" ";
-			}
-			cout << endl;
-		}
-		cout << endl;
-	}
-	point locate(T x){
-		for(int i = 0; i < h; ++i){
-			for(int j = 0; j < w; ++j){
-				if(grid[i][j] == x){
-					return point(i,j);
-				}
-			}
-		}
-		return point(-1,-1);
-	}
-	unsigned int count(T x){
-		unsigned int cnt = 0;
-		for(int i = 0; i < h; ++i){
-			for(int j = 0; j < w; ++j){
-				if(grid[i][j] == x){
-					++cnt;
-				}
-			}
-		}
-		return cnt;
-	}
-	T& operator[](point p){
-		return grid[p.i][p.j];
-	}
-	vector<T>& operator[](int n){
-		return grid[n];
-	}
-	int& visited(point p){
-		return vis[p.i][p.j];
-	}
-	int& distance(point p){
-		return dist[p.i][p.j];
-	}
-	unsigned int height(){
-		return h;
-	}
-	unsigned int width(){
-		return w;
-	}
-	bool valid(point p){
-		return (0 <= p.i and p.i < h) and (0 <= p.j and p.j < w);
-	}
+    Grid(const int n){
+        this -> H = n; this -> W = n;
+        this -> grid.resize(this -> H , vector<T>(this -> W));
+    }
+    Grid(const int n, const int m){
+        this -> H = n; this -> W = m;
+        this -> grid.resize(this -> H , vector<T>(this -> W));
+    }
+    Grid(const int n, const int m, const T x){
+        this -> H = n; this -> W = m;
+        this -> grid.resize(this -> H, vector<T>(this -> W, x));
+    }
+    Grid(const vector<vector<T>>& v){
+        assert(v.size() > 0  and v[0].size() > 0); 
+        this -> H = v.size(), this -> W = v[0].size();
+        this -> grid = v;
+    }
+    void resize(const int n){
+        this -> H = n; this -> W = n;
+        this -> grid.resize(this -> H , vector<T>(this -> W));
+    }
+    void resize(const int n, const int m){
+        this -> H = n; this -> W = m;
+        this -> grid.resize(this -> H , vector<T>(this -> W));
+    }
+    void resize(const int n, const int m, const T x){
+        this -> H = n; this -> W = m;
+        this -> grid.resize(this -> H, vector<T>(this -> W, x));
+    }
+    void resize(const vector<vector<T>>& v){
+        assert(v.size() > 0  and v[0].size() > 0); 
+        this -> H = v.size(), this -> W = v[0].size();
+        this -> grid = v;
+    }
+    T& at(const int i, const int j){
+        return this -> grid[i][j];
+    }
+    T& at(const pair<int, int> p){
+        return this -> grid[p.first][p.second];
+    }
+    bool inside(const pair<int, int> p){
+        return (0 <= p.first and 0 <= p.second and p.first < this -> H and p.second < this -> W);
+    }
+    bool inside(const int i, const int j){
+        return this -> inside(make_pair(i, j));
+    }
+    void change_dir(vector<int>x, vector<int>y){
+        x_dir = x, y_dir = y;
+    }
+    void change_dir(vector<string>dir){
+        x_dir.clear(); y_dir.clear();
+        for(auto& d : dir){for(auto& c : d){c = toupper(c);}
+            assert(direction_words.find(d) != direction_words.end());
+            auto [x, y] = direction_words[d];
+            x_dir.push_back(x), y_dir.push_back(y);
+        }
+    }
+    vector<T>& operator[](const int& i){
+        return this -> grid[i];
+    }
+    Grid<T> transpose(){
+        Grid<T> result(this->W, this->H);
+        for(int i = 0; i < this->H; ++i) for(int j = 0; j < this -> W; ++j){
+            result[j][i] = grid[i][j];
+        }
+        return result;
+    }
+    Grid<T> rotate90(){
+        Grid<T> result(this->W, this->H);
+        for(int i = 0; i < this->H; ++i) for(int j = 0; j < this -> W; ++j){
+            result[j][this->H - 1 - i] = this -> grid[i][j];
+        }
+        return result;
+    }
+    Grid<T> rotate180(){
+        Grid<T> result(this->H, this->W);
+        for(int i = 0; i < this->H; ++i) for(int j = 0; j < this -> W; ++j){
+            result[this->H - 1 - i][this->W - 1 - j] = this -> grid[i][j];
+        }
+        return result;
+    }
+    Grid<T> rotate270(){
+        Grid<T> result(this-> W, this-> W);
+        for(int i = 0; i < this->H; ++i) for(int j = 0; j < this -> W; ++j){
+            result[this->W - 1 - j][i] = this -> grid[i][j];
+        }
+        return result;
+    }
+    Grid<T> flipH(){
+        Grid<T> result(this-> H, this-> W);
+        for(int i = 0; i < this->H; ++i) for(int j = 0; j < this -> W; ++j){
+            result[i][ this -> W - 1 - j] = this -> grid[i][j];
+        }
+        return result;
+    }
+    Grid<T> flipV(){
+        Grid<T> result(this-> H, this-> W);
+        for(int i = 0; i < this->H; ++i) for(int j = 0; j < this -> W; ++j){
+            result[this -> H - 1 - i][j] = this -> grid[i][j];
+        }
+        return result;
+    }
+    vector<pair<int, int>> index_of(T item){
+        vector<pair<int, int>>indx;
+        for(int i = 0; i < this -> H; ++i)for(int j = 0; j < this -> W; ++j){
+            if(this -> grid[i][j] == item){
+                indx.push_back(make_pair(i,j));
+            }
+        }
+        return indx;
+    }
+    pair<int, int> neighbour(const pair<int, int> p, const int d){
+        return make_pair(p.first + x_dir[d], p.second + y_dir[d]);
+    }
+    pair<int int> neighbour(const int i, const int j, const int d){
+        return this->neighbour(make_pair(i, j), d);
+    }
+    pair<int, int> neighbour(const pair<int, int> p, string str){
+        for(auto& c : str){c = toupper(c);}
+        assert(direction_words.find(str) != direction_words.end());
+        auto [x, y] = direction_words[str];
+        return make_pair(p.first + x, p.second + y);
+    }
+    pair<int, int> neighbour(const int i, const int j, string str){
+        return this -> neighbour(make_pair(i, j), str);
+    }
+    pair<int, int> toroidal(const pair<int, int> p){
+        return make_pair((p.first + this -> H) % this -> H, (p.second + this -> W) % this -> W);
+    }
 };
-class Direction{
-	vector<char> dir = {'E', 'W', 'N', 'S'};
-	vector<int>dir_i = {+0, +0, -1, +1};
-	vector<int>dir_j = {+1, -1, +0, +0};
-	int s = 4;
-public:
-	Direction(){}
-	point operator[](int n){
-		if(n < dir.size()){
-			return point(dir_i[n], dir_j[n]);
-		}
-		return point(-1, -1);
-	}
-	char is(int n){
-		if(n < dir.size()){
-			return dir[n];
-		}
-		return '\0';
-	}
-	unsigned int size(){return 4;}
-};
-int main(){
-	
+pair<auto, auto> operator+(pair<auto, auto> a, pair<auto, auto>b){
+    return make_pair(a.first + b.first, a.second, b.second);
 }
+/**
+ * Grid<char>grid(n)                        n * n
+ * Grid<char>grid(n, m)                     n * m
+ * Grid<char>grid(n, m, v)                  n * m -> v
+ * Grid<char>grid(vector<vector<char>>())   auto
+        OR grid.resize() same as constractor
+ *
+ *  grid[i][j]      -> value& 
+ *  grid.at({i, j}) -> value&
+ * 
+ * grid.change_dir({"L", "R", "U", "D", "TL"});
+ * 
+ * grid.inside({i, j}) -> bool
+ * 
+ * grid.index_of(val) -> vector<pair<i, j>>
+ * 
+ * grid.transpose() -> Grid
+ * grid.rotate90()  -> Grid
+ * grid.rotate180() -> Grid
+ * grid.rotate270() -> Grid
+ * grid.flipH()     -> Grid
+ * grid.flipV()     -> Grid
+ * 
+ * grid.neighbour({i, j}, d)    -> pair<x, y>
+ * grid.neighbour({i, j}, "U")  -> pair<x, y>
+ * grid.torodial({i, j})        -> pair<x, y>
+ * 
+    "L", "U", "R", "D", "TL", "TR", "BL", "BR",
+    "W", "N", "E", "S", "NW", "NE", "SW", "SE"
+*/ 
+
+const vector<int> x_dir8 = { -1, -1, -1,  0,  0, +1, +1, +1 };
+const vector<int> y_dir8 = { -1,  0, +1, -1, +1, -1,  0, +1 };
+
+const vector<int> x_dir4 = {  0, -1,  0, +1 };
+const vector<int> y_dir4 = { -1,  0, +1,  0 };
+const vector<string> dir_arr = {"L", "U", "R", "D", /* "TL", "TR", "BL", "BR" */ };
+
+/*********/ 
+

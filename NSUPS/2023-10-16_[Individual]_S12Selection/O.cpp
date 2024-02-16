@@ -40,6 +40,7 @@ int main(){
     dbg(__elapsed__());
 }
 void precompute(){}
+
 void solve(const int case_no){
-    
+    Syetem.out.println("Hello");
 }

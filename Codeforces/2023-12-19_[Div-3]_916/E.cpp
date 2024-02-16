@@ -1,45 +1,71 @@
 /**
  *
  * Author: withtahmid
- * Created: 2023-12-19 20:32:24
  *
  **/
 #include <bits/stdc++.h>
+#include<ext/pb_ds/assoc_container.hpp>
+#include<ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
 using namespace std;
-#ifdef LOCAL
+#ifdef LOCAL 
+
 #include <debug.h>
 #else
+#define local(...) 
 #define debug(...)
 #define dbg(...)
-#define init(...)
 #endif
 #define endl '\n'
 #define pb push_back
+#define pf push_front
 #define all(v) v.begin(),v.end()
 #define len(v) ((int) v.size())
-#define mem(x, y) memset(x, y, sizeof(x))
-typedef int_fast64_t ll;
+#define has(x, y) (x.find(y) != x.end())
+typedef long long ll;
 typedef long double ld;
 typedef pair<int, int> pii;
-typedef vector<int> vi;
-inline constexpr auto _max(const auto f, const auto... r){return max({f, r...});}
-inline constexpr auto _min(const auto f, const auto... r){return min({f, r...});}
-inline void operator>>(istream& istream, vector<auto>&v){for(auto& i:v){cin>>i;}}
+inline void print(const auto &...a) {((cout << a), ...);}
+inline void println(const auto &...a) {print(a..., '\n');}
+inline bool read(auto& x){return(cin >> x) ? true : false;}
+inline bool read(vector<auto>& v) {bool x = true; for(auto&i:v){x&=read(i);} return x;}
+inline bool read(pair<auto, auto>& p){ return (read(p.first) and read(p.second));}
+inline bool read(auto &...a) {return (((read(a))?true:false)&&...);}
 void solve(int);
 void precompute();
-int main(){
+signed main(){
     ios_base::sync_with_stdio(false);
     cin.tie(NULL); cout.tie(NULL);
-    init();
+    dbg(__init__());
     precompute();
-    bool test_case = not true;
-    int tc = 1; if(test_case){cin >> tc;}
+    bool test_case = true;
+    int tc = 1; if(test_case){read(tc);}
     for(int i = 1; i <= tc; ++i){
+        dbg(__case__(i));
         solve(i);
     }
     dbg(__elapsed__());
+    return 0;
 }
+const int maxn = (1 * 1e5) + 69;
+const int mod = (1e9 + 7);
+const int oo = INT_MAX;
+const ll OO = LLONG_MAX;
 void precompute(){}
-void solve(const int case_no){
-    
+void solve([[maybe_unused]] const int case_no){
+    int n;
+    read(n);
+    vector<int>a(n), b(n);
+    read(a);
+    read(b);
+    vector<int>tot(n);
+    for(int i = 0; i < n; ++i){
+        tot[i] = (a[i] + b[i]);
+    }
+    ll res = accumulate(all(b), 0LL) - n;
+    sort(all(tot), greater<int>());
+    for(int i = 0; i < n; i += 2){
+        res -= (tot[i] - 2);
+    }
+    println(-1LL * res);
 }

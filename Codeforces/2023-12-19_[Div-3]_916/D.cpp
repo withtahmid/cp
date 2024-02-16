@@ -1,123 +1,83 @@
 /**
  *
  * Author: withtahmid
- * Created: 2023-12-19 20:32:24
  *
  **/
 #include <bits/stdc++.h>
+#include<ext/pb_ds/assoc_container.hpp>
+#include<ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
 using namespace std;
-#ifdef LOCAL
+#ifdef LOCAL 
 #include <debug.h>
 #else
+#define local(...) 
 #define debug(...)
 #define dbg(...)
-#define init(...)
 #endif
 #define endl '\n'
 #define pb push_back
+#define pf push_front
 #define all(v) v.begin(),v.end()
 #define len(v) ((int) v.size())
-#define mem(x, y) memset(x, y, sizeof(x))
-typedef int_fast64_t ll;
+#define has(x, y) (x.find(y) != x.end())
+typedef long long ll;
 typedef long double ld;
 typedef pair<int, int> pii;
-typedef vector<int> vi;
-inline constexpr auto _max(const auto f, const auto... r){return max({f, r...});}
-inline constexpr auto _min(const auto f, const auto... r){return min({f, r...});}
-inline void operator>>(istream& istream, vector<auto>&v){for(auto& i:v){cin>>i;}}
+inline void print(const auto &...a) {((cout << a), ...);}
+inline void println(const auto &...a) {print(a..., '\n');}
+inline bool read(auto& x){return(cin >> x) ? true : false;}
+inline bool read(vector<auto>& v) {bool x = true; for(auto&i:v){x&=read(i);} return x;}
+inline bool read(pair<auto, auto>& p){ return (read(p.first) and read(p.second));}
+inline bool read(auto &...a) {return (((read(a))?true:false)&&...);}
 void solve(int);
 void precompute();
-int main(){
+signed main(){
     ios_base::sync_with_stdio(false);
     cin.tie(NULL); cout.tie(NULL);
-    init();
+    dbg(__init__());
     precompute();
     bool test_case = true;
-    int tc = 1; if(test_case){cin >> tc;}
+    int tc = 1; if(test_case){read(tc);}
     for(int i = 1; i <= tc; ++i){
+        dbg(__case__(i));
         solve(i);
     }
     dbg(__elapsed__());
+    return 0;
 }
+const int maxn = (1 * 1e5) + 69;
+const int mod = (1e9 + 7);
+const int oo = INT_MAX;
+const ll OO = LLONG_MAX;
 void precompute(){}
-void solve(const int case_no){
-    ll n;
-    cin >> n;
-
-    vector<ll> a(n), b(n), c(n);
-    
-    cin >> a;
-    cin >> b;
-    cin >> c;
-
-    ll idx_1 = 0;
-    ll val_1 = 0;
-    ll type_1 = 0;
-
-    for(int i = 0; i < n; ++i){
-        if(a[i] > val_1){
-            val_1 = a[i];
-            idx_1 = i;
-            type_1 = 0;
-        }
-        if(b[i] > val_1){
-            val_1 = b[i];
-            idx_1 = i;
-            type_1 = 1;
-        }
-        if(c[i] > val_1){
-            val_1 = c[i];
-            idx_1 = i;
-            type_1 = 2;
+ll dp[maxn][10];
+vector<vector<int>>v(3, vector<int>(maxn));
+int n;
+ll fn(int i, int taken){
+    if(i >= n or taken == 7){
+        return 0LL;
+    }
+    if(dp[i][taken] != -1){
+        return dp[i][taken];
+    }
+    ll res = fn(i + 1, taken);
+    for(int mask = 0; mask < 3; ++mask){
+        if(((taken >> mask) & 1) == 0){
+            res = max(res, fn(i + 1, (taken + (1 << mask))) + v[mask][i]);
         }
     }
-    
-    ll idx_2 = 0;
-    ll val_2 = 0;
-    ll type_2 = 0;
-    
+    return dp[i][taken] = res;
+}
+void solve([[maybe_unused]] const int case_no){
+    read(n);
+    for(int i = 0; i < 3; ++i) for(int j = 0; j < n; ++j){
+        read(v[i][j]);
+    }
     for(int i = 0; i < n; ++i){
-        if(i == idx_1) continue;
-        if(a[i] > val_2 and (type_1 != 0)){
-            val_2 = a[i];
-            idx_2 = i;
-            type_2 = 0;
-        }
-        if(b[i] > val_2 and (type_1 != 1)){
-            val_2 = b[i];
-            idx_2 = i;
-            type_2 = 1;
-        }
-        if(c[i] > val_2 and (type_1 != 2)){
-            val_2 = c[i];
-            idx_2 = i;
-            type_2 = 2;
+        for(int j = 0; j < 8; ++j){
+            dp[i][j] = -1;
         }
     }
-
-    ll idx_3 = 0;
-    ll val_3 = 0;
-    ll type_3 = 0;
-    
-    for(int i = 0; i < n; ++i){
-        if(i == idx_1 || i == idx_2) continue;
-
-        if(a[i] > val_3 and (type_1 != 0) and (type_2 != 0)){
-            val_3 = a[i];
-            idx_3 = i;
-            type_3 = 0;
-        }
-        if(b[i] > val_3 and (type_1 != 1) and (type_2 != 1)){
-            val_3 = b[i];
-            idx_3 = i;
-            type_3 = 1;
-        }
-        if(c[i] > val_3 and (type_1 != 2) and (type_2 != 2)){
-            val_3 = c[i];
-            idx_3 = i;
-            type_3 = 2;
-        }
-    }
-    assert(type_1 != type_2 and type_2 != type_3);
-    cout << val_1 + val_2 + val_3 << endl;
+    println(fn(0, 0));
 }
