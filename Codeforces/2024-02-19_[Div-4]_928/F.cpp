@@ -1,3 +1,62 @@
+/**
+ *
+ * Author: withtahmid
+ * Created: 2024-02-19 20:29:10
+ *
+ **/
+#include <bits/stdc++.h>
+#include<ext/pb_ds/assoc_container.hpp>
+#include<ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+using namespace std;
+#ifdef LOCAL 
+#include <debug.h>
+#else
+#define local(...) 
+#define debug(...)
+#define dbg(...)
+#endif
+#define pb push_back
+#define all(v) v.begin(),v.end()
+#define len(v) ((int) v.size())
+#define has(x, y) (x.find(y) != x.end())
+#define dec(x) setprecision(x)
+typedef long long ll;
+typedef long double ld;
+typedef pair<int, int> pii;
+inline void print(const auto& a){cout<<a;}
+inline void print(const vector<auto>& v){for(auto&i:v){print(i);print(" ");}}
+inline void print(const auto &...a) {((print(a)), ...);}
+inline void println(const auto &...a) {print(a..., '\n');}
+inline bool read(auto& x){return(cin >> x) ? true : false;}
+inline bool read(pair<auto, auto>& p){ return (read(p.first) and read(p.second));}
+inline bool read(vector<auto>& v) {bool x = true; for(auto&i:v){x&=read(i);} return x;}
+inline bool read(auto &...a) {return (((read(a))?true:false)&&...);}
+inline string kes(int k){return("Case "+to_string(k)+": ");}
+template <class T>inline T scan(){T t;read(t);return t;}
+template<class T>
+using _set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+void solve(const int& case_no);
+void precompute();
+signed main(){
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL); cout.tie(NULL);
+    dbg(__init__());
+    precompute();
+    bool test_case = true;
+    int tc = 1; if(test_case){read(tc);}
+    for(int i = 1; i <= tc; ++i){
+        dbg(__case__(i));
+        solve(i);
+    }
+    dbg(__elapsed__());
+}
+const int maxn5 = (1 * 1e5) + 69;
+const int maxn6 = (1 * 1e6) + 69;
+const int mod7 = (1e9 + 7);
+const int mod9 = 998244353;
+const int oo = INT_MAX;
+const ll OO = LLONG_MAX;
 
 /******************/ 
 template<class T>
@@ -140,7 +199,7 @@ public:
     pair<int, int> neighbour(const pair<int, int> p, const int d){
         return make_pair(p.first + x_dir[d], p.second + y_dir[d]);
     }
-    pair<int int> neighbour(const int i, const int j, const int d){
+    pair<int, int> neighbour(const int i, const int j, const int d){
         return this->neighbour(make_pair(i, j), d);
     }
     pair<int, int> neighbour(const pair<int, int> p, string str){
@@ -156,9 +215,7 @@ public:
         return make_pair((p.first + this -> H) % this -> H, (p.second + this -> W) % this -> W);
     }
 };
-pair<auto, auto> operator+(pair<auto, auto> a, pair<auto, auto>b){
-    return make_pair(a.first + b.first, a.second, b.second);
-}
+
 /**
  * Grid<char>grid(n)                        n * n
  * Grid<char>grid(n, m)                     n * m
@@ -195,7 +252,72 @@ const vector<int> y_dir8 = { -1,  0, +1, -1, +1, -1,  0, +1 };
 
 const vector<int> x_dir4 = {  0, -1,  0, +1 };
 const vector<int> y_dir4 = { -1,  0, +1,  0 };
-const vector<string> dir_arr = {"L", "U", "R", "D", /* "TL", "TR", "BL", "BR" */ };
+const vector<string> dir_arr = {"TL", "TR", "BL", "BR", /* "TL", "TR", "BL", "BR" */ };
 
 /*********/ 
+void precompute(){}
+void brutforce(){}
+map<ll, ll>dp;
+int call = 0;
+ll fn(Grid<char> grid, int deep){
+        
+    dbg(call ++);
 
+    ll state = 0LL;
+
+    for(int i = 0; i < 7; ++i){
+        for(int j = 0; j < 7; ++j){
+            int bit = (i * 7) + j;
+            if(grid[i][j] == 'B'){
+                state |= (1LL << bit);
+            }
+        }
+    }
+        
+    if(has(dp, state)){
+        return dp[state];
+    }
+
+    auto candidate = [&](int i, int j) -> bool{
+        bool res = (grid[i][j] == 'B');
+        for(int d = 0; d < len(dir_arr); ++d){
+            res &= grid.at(grid.neighbour(i, j, dir_arr[d])) == 'B';
+        }
+        return res;
+    };
+
+    ll ans = oo;
+    for(int i = 1; i < 6; ++i){
+        for(int j = 1; j < 6; ++j){
+            if(grid[i][j] == 'W' or  (not candidate(i, j))) {
+                continue;
+            }
+            // dbg(deep, i, j);
+            auto temp = grid;
+            temp[i][j] = 'W';
+            ans = min(ans, fn(temp, deep+1) + 1);
+            for(int d = 0; d < len(dir_arr); ++d){
+                temp = grid;
+                auto idx = grid.neighbour(i, j, dir_arr[d]);
+                temp[idx.first][idx.second] = 'W';
+                ans = min(ans, fn(temp, deep+1) + 1);
+            }
+        }
+    }
+
+    if(ans == oo){
+        return ans = 0;
+    }
+    return dp[state] = ans;
+
+}
+
+void solve([[maybe_unused]] const int& case_no){
+    dp.clear();
+    int n = 7;
+    Grid<char> grid(n);
+    for(int i = 0; i < n; ++i){
+        read(grid[i]);
+    }
+    println(fn(grid, 0));
+}

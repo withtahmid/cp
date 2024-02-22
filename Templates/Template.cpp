@@ -20,7 +20,6 @@ using namespace std;
 #define all(v) v.begin(),v.end()
 #define len(v) ((int) v.size())
 #define has(x, y) (x.find(y) != x.end())
-#define dec(x) setprecision(x)
 typedef long long ll;
 typedef long double ld;
 typedef pair<int, int> pii;
@@ -53,10 +52,9 @@ signed main(){
 }
 const int maxn5 = (1 * 1e5) + 69;
 const int maxn6 = (1 * 1e6) + 69;
-const int mod7 = (1e9 + 7);
-const int mod9 = 998244353;
-const int oo = INT_MAX;
-const ll OO = LLONG_MAX;
+const int mod = (1e9 + 7); //998244353
+const int oo = ((1ULL << 31) - 1);
+const  ll OO = ((1ULL << 63) - 1);
 void precompute(){}
 void brutforce(){}
 void solve([[maybe_unused]] const int& case_no){

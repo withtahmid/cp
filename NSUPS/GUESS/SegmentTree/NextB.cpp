@@ -68,27 +68,50 @@ private:
         }
     }
 
-    void updateRangeUtil(int node, int start, int end, int l, int r, int diff) {
-        propagate(node, start, end);
+    void updateRangeUtil(int node, int left, int right, int lo, int hi, int diff) {
+        propagate(node, left, right);
 
-        if (start > end || start > r || end < l)
+        if (left > right || left > hi || right < lo)
             return;
 
-        if (start >= l && end <= r) {
-            tree[node] += diff * (end - start + 1);
-            if (start != end) {
+        if (left >= lo && right <= hi) {
+            tree[node] += diff * (right - left + 1);
+            if (left != right) {
                 lazy[2 * node] += diff;
                 lazy[2 * node + 1] += diff;
             }
             return;
         }
 
-        int mid = (start + end) / 2;
-        updateRangeUtil(2 * node, start, mid, l, r, diff);
-        updateRangeUtil(2 * node + 1, mid + 1, end, l, r, diff);
+
+        int mid = (left + right) / 2;
+        updateRangeUtil(2 * node, left, mid, lo, hi, diff);
+        updateRangeUtil(2 * node + 1, mid + 1, right, lo, hi, diff);
 
         tree[node] = tree[2 * node] + tree[2 * node + 1];
     }
+    // void updateRangeUtil(int stIndex, int left, int right, int lo, int hi, int diff) {
+    //     propagate(stIndex, left, right);
+    //     if(lo == left && hi == right){
+    //         tree[stIndex] += diff * (right - left + 1);
+    //         if (left != right) {
+    //             lazy[2 * stIndex] += diff;
+    //             lazy[2 * stIndex + 1] += diff;
+    //         }
+    //         return;
+    //     }
+    //     int mid = (left + right) / 2;
+    //     if (lo > mid) {
+    //         updateRangeUtil(2 * stIndex + 1, mid + 1, right, lo, hi, diff);
+    //     }
+    //     else if (hi <= mid) {
+    //         updateRangeUtil(2 * stIndex, left, mid, lo, hi, diff);
+    //     }else{
+    //         updateRangeUtil(2 * stIndex, left, mid, lo, mid, diff);
+    //         updateRangeUtil(2 * stIndex + 1, mid + 1, right, mid + 1, hi, diff);
+    //     }
+    //     tree[stIndex] = tree[2 * stIndex] + tree[2 * stIndex + 1];
+    // }
 
     int query(int stIndex, int left, int right, int lo, int hi) {
         propagate(stIndex, left, right);
@@ -102,7 +125,6 @@ private:
         if (hi <= mid) {
             return query(2 * stIndex, left, mid, lo, hi);
         }
-
         return query(2 * stIndex, left, mid, lo, mid) + query(2 * stIndex + 1, mid + 1, right, mid + 1, hi);
     }
 
@@ -148,14 +170,15 @@ void solve([[maybe_unused]] const int case_no){
     println("Case ", case_no, ":");
     ll n, q;
     read(n, q);
-    dbg(n, q);
     vector<int>v(n, 0LL);
     LazySegmentTree segTree(v);
     while(q--){
         ll op, l, r;
         read(op, l, r);
         if(op == 0LL){
-            segTree.updateRange(l, r, scan<ll>());
+            ll val = scan<ll>();
+            segTree.updateRange(l, r, val);
+            dbg(l, r, "updated");
         }else{
             println(segTree.query(l, r));
         }

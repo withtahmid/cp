@@ -72,7 +72,6 @@ private:
         propagate(stIndex, left, right);
         dbg(left, right, lo, hi);
         if(lo == left and hi == right){
-            dbg("I am here");
             tree[stIndex] += diff * (right - left + 1);
             if (left != right) {
                 lazy[2 * stIndex] += diff;

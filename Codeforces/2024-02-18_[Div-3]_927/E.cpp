@@ -1,6 +1,7 @@
 /**
  *
  * Author: withtahmid
+ * Created: 2024-02-18 18:02:51
  *
  **/
 #include <bits/stdc++.h>
@@ -19,8 +20,7 @@ using namespace std;
 #define all(v) v.begin(),v.end()
 #define len(v) ((int) v.size())
 #define has(x, y) (x.find(y) != x.end())
-#define decimal(x) setprecision(x)
-#define int ll
+#define dec(x) setprecision(x)
 typedef long long ll;
 typedef long double ld;
 typedef pair<int, int> pii;
@@ -32,9 +32,11 @@ inline bool read(auto& x){return(cin >> x) ? true : false;}
 inline bool read(pair<auto, auto>& p){ return (read(p.first) and read(p.second));}
 inline bool read(vector<auto>& v) {bool x = true; for(auto&i:v){x&=read(i);} return x;}
 inline bool read(auto &...a) {return (((read(a))?true:false)&&...);}
+inline string kes(int k){return("Case "+to_string(k)+": ");}
+template <class T>inline T scan(){T t;read(t);return t;}
 template<class T>
 using _set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
-void solve(int);
+void solve(const int& case_no);
 void precompute();
 signed main(){
     ios_base::sync_with_stdio(false);
@@ -42,17 +44,21 @@ signed main(){
     dbg(__init__());
     precompute();
     bool test_case = true;
-    int tc = 1; if(test_case){cin >> tc;}
+    int tc = 1; if(test_case){read(tc);}
     for(int i = 1; i <= tc; ++i){
         dbg(__case__(i));
         solve(i);
     }
     dbg(__elapsed__());
-    return 0;
 }
-
-/*******************************************************/
-
+const int maxn5 = (1 * 1e5) + 69;
+const int maxn6 = (1 * 1e6) + 69;
+const int mod7 = (1e9 + 7);
+const int mod9 = 998244353;
+const int oo = INT_MAX;
+const ll OO = LLONG_MAX;
+void precompute(){}
+void brutforce(){}
 template < class T, class V >
 class LazySegmentTree {
 private:
@@ -67,6 +73,7 @@ public:
 
     LazySegmentTree(const vector< T >& arr)
         :LazySegmentTree(arr, (int)arr.size()){}
+    
     ~LazySegmentTree() {
         delete[] nodes;
     }
@@ -127,8 +134,6 @@ private:
     }
 };
 
-/******************/
-
 struct Node {
     int leftIndx = -1, rightIndx = -1; 
     Node* leftChild = nullptr; 
@@ -145,16 +150,14 @@ struct Node {
     void assignLeaf(auto val, int idx) {
         this -> leftIndx =  this -> rightIndx = idx; 
         this -> assignLeaf(val);
-    }
-    /*-----------------------------------------------------------------*/ 
+    }    
+
+    int sum = 0LL;
+    int lazy = 0LL;
     
-
-    ll sum = 0LL;
-    ll lazy = 0LL;
-
     void propagate(){
         assert(leftIndx != -1 and rightIndx != -1);
-        this -> sum += ((this -> nodeLength()) * this -> lazy);
+        this -> sum += (this -> lazy);
         if(not this -> isLeaf()){
             leftChild -> lazy += this->lazy;
             rightChild -> lazy += this->lazy;
@@ -163,57 +166,111 @@ struct Node {
     }
     void update(ll val){
         assert(leftIndx != -1 and rightIndx != -1);
-        this -> sum += (val * (this -> nodeLength()));
+        this -> sum += (val);
         if(not this->isLeaf()){
             this -> leftChild -> lazy += val;
             this -> rightChild -> lazy += val;
         }
     }
+
     void merge(Node leftC, Node rightC) {
-        this -> sum = leftC.sum + rightC.sum;
+        this -> sum = max(leftC.sum, rightC.sum);
     }
+    
     void assignLeaf(ll val){
         this -> sum = val;
         this -> lazy = 0LL;
     }
 };
 
-/**
- * 
- * @LazySegmentTree<int, Node> tree(arr);
- * @LazySegmentTree<int, Node> tree(arr, size);
- * 
- * @Zero-based indexing for Query and Update
- * 
- * @Range Query     @tree.query(l, r);
- * @Range Update    @tree.update(l, r, value);
- * 
- * */ 
+struct Node22 {
+    int leftIndx = -1, rightIndx = -1; 
+    Node22* leftChild = nullptr; 
+    Node22* rightChild = nullptr;
+    void buildMerge(Node22& leftC, Node22& rightC) {
+        this -> leftChild = &leftC;this -> rightChild = &rightC;
+        this -> leftIndx = leftC.leftIndx; 
+        this -> rightIndx = rightC.rightIndx;
+        this -> merge(leftC, rightC);
+    }
+    Node22 query(){return * this;}
+    long long nodeLength(){return ((this->rightIndx-this->leftIndx)+1LL);}
+    bool isLeaf(){return (leftIndx == rightIndx);}
+    void assignLeaf(auto val, int idx) {
+        this -> leftIndx =  this -> rightIndx = idx; 
+        this -> assignLeaf(val);
+    }    
 
-/*******************************************************/
-
-const int maxn5 = (1 * 1e5) + 69;
-const int maxn6 = (1 * 1e6) + 69;
-const int mod7 = (1e9 + 7);
-const int mod9 = 998244353;
-const int oo = INT_MAX;
-const ll OO = LLONG_MAX;
-void precompute(){}
-void brutforce(){}
-template < class T > T scan(){T t; cin >> t; return t;} 
-#define kes(x) "Case " + to_string(x) + ":"
-void solve([[maybe_unused]] const int case_no){
-    println(kes(case_no));
-    int n, q;
-    read(n, q);
-    LazySegmentTree<ll, Node> segTree(vector<ll>(n, 0LL));
-    while(q--){
-        int op, l, r;
-        read(op, l, r);
-        if(op == 0LL){
-            segTree.update(l, r, scan<int>());
-        }else{
-            println(segTree.query(l, r).sum);
+    int right_most = 0;
+    int lazy = -1;
+    void propagate(){
+        assert(leftIndx != -1 and rightIndx != -1);
+        this -> right_most = max(this -> right_most, this -> lazy);
+        if(not this -> isLeaf()){
+            this->leftChild->lazy = max(this->leftChild->lazy, this->lazy);
+            this->rightChild->lazy = max(this->rightChild->lazy, this->lazy);
+        }
+        this -> lazy = -1;
+    }
+    void update(int val){
+        assert(leftIndx != -1 and rightIndx != -1);
+        this -> right_most = max(this -> right_most, val);
+        if(not this->isLeaf()){
+            this->leftChild->lazy = max(this->leftChild->lazy, val);
+            this->rightChild->lazy = max(this->rightChild->lazy, val);
         }
     }
+    void merge(Node22 leftC, Node22 rightC) {
+        this -> right_most = max(leftC.right_most, rightC.right_most);
+    }
+    void assignLeaf(int val){
+        this -> right_most = max(this->right_most, val);
+        this -> lazy = -1;
+    }
+};
+
+
+int dp[maxn6];
+
+int fn(int i, const int n, auto& indexTree, auto& resTree){
+    if(i >= n){
+        return 0;
+    }
+    auto& res = dp[i];
+    if(res != -1){
+        return res;
+    }
+    res = fn(i + 1, n, indexTree, resTree);
+    int r = indexTree.query(i, i).right_most;
+    res = max(res, fn(r + 1, n, indexTree, resTree) + resTree.query(i, i).sum);
+    return res;
+}
+
+void solve([[maybe_unused]] const int& case_no){
+    int n, m;
+    read(n, m);
+    vector<int>idx(n);
+    for(int i = 0; i < n; ++i){
+        idx[i] = i, dp[i] = -1;
+    }
+
+    LazySegmentTree<int, Node> resTree(vector<int>(n, 0));
+    LazySegmentTree<int, Node22> indexTree(idx);
+
+    vector<pii>queries(m);
+    
+    for(auto& p : queries){
+        read(p.first, p.second);
+        --p.first, --p.second;
+    }
+
+    sort(all(queries));
+
+    for(const auto& [l, r] : queries){
+        resTree.update(l, r, 1);
+        auto rmax = indexTree.query(l, r).right_most;
+        indexTree.update(l, r, max(r, rmax));
+    }
+
+    println(fn(0, n, indexTree, resTree));
 }
