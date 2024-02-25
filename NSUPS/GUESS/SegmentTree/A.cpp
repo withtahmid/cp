@@ -50,112 +50,94 @@ signed main(){
     return 0;
 }
 
-
-
-/*******************************************************/
 template < class T, class V >
 class SegmentTree {
 private:
-    V * nodes;
-    int N;
-
-public:
-    SegmentTree(const vector < T > & arr, const int sz) {
-        this -> N = sz;
-        nodes = new V[getSegmentTreeSize(this -> N)];
-        buildTree(arr, 1, 0, N - 1);
-    }
-    SegmentTree(const vector<T>& arr):
-        SegmentTree(arr, (int) arr.size()){}
-    ~SegmentTree() {
-        delete[] nodes;
-    }
-
-    V query(int lo, int hi) {
-        assert(0 <= lo); assert(hi < N); assert(lo <= hi);
-        V result = query(1, 0, N - 1, lo, hi);
-        return result.query();
-    }
-
-    void update(int index, T value) {
-         assert(0 <= index); assert(index < N);
-        update(1, 0, N - 1, index, value);
-    }
-
-    private:
-        void buildTree(const vector < T > & arr, int stIndex, int lo, int hi) {
-            if (lo == hi) {
-                nodes[stIndex].assignLeaf(arr[lo]);
-                return;
-            }
-
-            int left = 2 * stIndex, right = left + 1, mid = (lo + hi) / 2;
-            buildTree(arr, left, lo, mid);
-            buildTree(arr, right, mid + 1, hi);
-            nodes[stIndex].merge(nodes[left], nodes[right]);
+    vector<V>nodes;
+    uint32_t N;
+    void buildTree(const vector < T > & arr, uint32_t stIndex, uint32_t left, uint32_t right) {
+        if (left == right) {
+            return nodes[stIndex].assignLeaf(arr[left]);
         }
+        const uint32_t lc = (stIndex << 1), rc = lc + 1, mid = ((left + right) >> 1);
+        buildTree(arr, lc, left, mid);
+        buildTree(arr, rc, mid + 1, right);
+        nodes[stIndex].mergeNode(nodes[lc], nodes[rc]);
+    }
 
-    V query(int stIndex, int left, int right, int lo, int hi) {
+    V query(uint32_t stIndex, uint32_t left, uint32_t right, uint32_t lo, uint32_t hi) {
         if (left == lo && right == hi) {
             return nodes[stIndex];
         }
-        int mid = (left + right) / 2;
+        const uint32_t lc = (stIndex << 1), rc = lc + 1, mid = ((left + right) >> 1);
         if (lo > mid) {
-            return query(2 * stIndex + 1, mid + 1, right, lo, hi);
+            return query(rc, mid + 1, right, lo, hi);
         }
         if (hi <= mid) {
-            return query(2 * stIndex, left, mid, lo, hi);
+            return query(lc, left, mid, lo, hi);
         }
 
-        V leftResult = query(2 * stIndex, left, mid, lo, mid);
-        V rightResult = query(2 * stIndex + 1, mid + 1, right, mid + 1, hi);
+        V leftResult = query(lc, left, mid, lo, mid);
+        V rightResult = query(rc, mid + 1, right, mid + 1, hi);
         V result;
-        result.merge(leftResult, rightResult);
+        result.mergeNode(leftResult, rightResult);
         return result;
     }
 
-    int getSegmentTreeSize(int N) {
-        int size = 1;
-        for (; size < N; size <<= 1);
-        return size << 1;
+    uint32_t sgtsz(uint32_t N) {
+        uint32_t size = 1u; for(; size < N; size <<= 1u);return size << 1u;
     }
 
-    void update(int stIndex, int lo, int hi, int index, T value) {
-        if (lo == hi) {
-            nodes[stIndex].assignLeaf(value);
-            return;
+    void update(uint32_t stIndex, uint32_t left, uint32_t right, uint32_t index, T value) {
+        if (left == right) {
+            return nodes[stIndex].assignLeaf(value);
         }
-
-        int left = 2 * stIndex, right = left + 1, mid = (lo + hi) / 2;
+        const uint32_t lc = (stIndex << 1), rc = lc + 1, mid = ((left + right) >> 1);
         if (index <= mid) {
-            update(left, lo, mid, index, value);
+            update(lc, left, mid, index, value);
         } else {
-            update(right, mid + 1, hi, index, value);
+            update(rc, mid + 1, right, index, value);
         }
-        nodes[stIndex].merge(nodes[left], nodes[right]);
+        nodes[stIndex].mergeNode(nodes[lc], nodes[rc]);
+    }
+public:
+    SegmentTree(const vector < T > & arr, const uint32_t sz) {
+        this -> N = sz;
+        nodes.resize(sgtsz(this -> N) + 5);
+        buildTree(arr, 1, 0, N - 1);
+    }
+    SegmentTree(const vector<T>& arr):SegmentTree(arr, (uint32_t) arr.size()){}
+    SegmentTree(const uint32_t sz){
+        this -> N = sz;
+        nodes.resize(sgtsz(this -> N) + 5);
+    }
+    void assign(const vector<T>& arr){
+        assert(nodes.size() >= sgtsz(arr.size()));
+        this -> N = (uint32_t)arr.size();
+        buildTree(arr, 1, 0, N - 1);
+    }
+    V query(uint32_t lo, uint32_t hi) {
+        assert(0 <= lo); assert(hi < N); assert(lo <= hi);
+        return query(1, 0, N - 1, lo, hi);
+    }
+
+    void update(uint32_t index, T value) {
+        assert(0 <= index and index < this->N);
+        update(1, 0, N - 1, index, value);
     }
 };
 
-/*********/
-
 struct Node {
-
-    int neg = 0, pos = 0, zero = 0;
-
-    void merge(Node a, Node b) {
-        this -> neg = a.neg + b.neg;
-        this -> pos = a.pos + b.pos;
-        this -> zero = a.zero + b.zero;
+    int32_t neg = 0, pos = 0, zero = 0;
+    void mergeNode(Node& LC, Node& RC) {
+        this -> neg = LC.neg + RC.neg;
+        this -> pos = LC.pos + RC.pos;
+        this -> zero = LC.zero + RC.zero;
     }
-
-    Node query() {
-        return * this;
-    }
-
-    void assignLeaf(int val) {
-        neg = (val < 0);
-        pos = (val > 0);
-        zero = (val == 0);
+    void assignLeaf(int32_t val) {
+        this -> neg = (val < 0);
+        this -> pos = (val > 0);
+        this -> zero = (val == 0);
     }
 };
 
@@ -186,15 +168,15 @@ void brutforce(){}
 void solve([[maybe_unused]] const int case_no){
     int n, k;
     while(cin >> n >> k){
-        vector<int>v(n);
-        for(int& i : v){
+        vector<int32_t>v(n);
+        for(int32_t& i : v){
             cin >> i;
         }
-        SegmentTree<int, Node> tree(v);
+        SegmentTree<int32_t, Node> tree(v);
         string res = "";
         while(k--){
             char x;
-            int l, r;
+            int32_t l, r;
             cin >> x >> l >> r;
             if(x == 'C'){
                 tree.update(l -1, r);
@@ -211,4 +193,6 @@ void solve([[maybe_unused]] const int case_no){
         }
         cout << res << '\n';
     }
+    Node x;
+    dbg(sizeof(x) / sizeof(int32_t));
 }

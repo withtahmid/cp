@@ -1,7 +1,12 @@
-Thu Feb 22 03:05:57 2024
+Mon Feb 26 04:35:56 2024
  
 ---- Case 1 ---------
  
+4 
+
+---- Case 2 ---------
+ 
+4 
 
 
 Elapsed time: 0 millisecond 
