@@ -1,3 +1,61 @@
+/**
+ *
+ * Author: withtahmid
+ *
+ **/
+#include <bits/stdc++.h>
+#include<ext/pb_ds/assoc_container.hpp>
+#include<ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+using namespace std;
+#ifdef LOCAL 
+#include <debug.h>
+#else
+#define local(...) 
+#define debug(...)
+#define dbg(...)
+#endif
+#define pb push_back
+#define all(v) v.begin(),v.end()
+#define len(v) ((int) v.size())
+#define has(x, y) (x.find(y) != x.end())
+typedef long long ll;
+typedef long double ld;
+typedef pair<int, int> pii;
+inline void print(const auto& a){cout<<a;}
+inline void print(const vector<auto>& v){for(auto&i:v){print(i);print(" ");}}
+inline void print(const auto &...a) {((print(a)), ...);}
+inline void println(const auto &...a) {print(a..., '\n');}
+inline bool read(auto& x){return(cin >> x) ? true : false;}
+inline bool read(pair<auto, auto>& p){ return (read(p.first) and read(p.second));}
+inline bool read(vector<auto>& v) {bool x = true; for(auto&i:v){x&=read(i);} return x;}
+inline bool read(auto &...a) {return (((read(a))?true:false)&&...);}
+inline string kes(int k){return("Case "+to_string(k)+": ");}
+template <class T>inline T scan(){T t;read(t);return t;}
+template<class T>
+using _set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+void solve(const int& case_no);
+void precompute();
+signed main(){
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL); cout.tie(NULL);
+    dbg(__init__());
+    precompute();
+    bool test_case = true;
+    int tc = 1; if(test_case){read(tc);}
+    for(int i = 1; i <= tc; ++i){
+        dbg(__case__(i));
+        solve(i);
+    }
+    dbg(__elapsed__());
+}
+const int maxn5 = (1 * 1e5) + 69;
+const int maxn6 = (1 * 1e6) + 69;
+const int mod = (1e9 + 7); //998244353
+const int oo = ((1ULL << 31) - 1);
+const  ll OO = ((1ULL << 63) - 1);
+void precompute(){}
+void brutforce(){}
 
 
 template < class T, class V >
@@ -61,7 +119,7 @@ private:
         const uint lc = (stIndex << 1), rc = lc | 1, mid = ((left + right) >> 1);
         if (left >= lo && right <= hi) {
             bool l = left == right;
-            return nodes[stIndex].updateNode(left, right, (l ? dmy : nodes[lc]), (l ? dmy : nodes[rc]), val);
+           return nodes[stIndex].updateNode(left, right, (l ? dmy : nodes[lc]), (l ? dmy : nodes[rc]), val);
         }
         updateRange(lc, left, mid, lo, hi, val);
         updateRange(rc, mid + 1, right, lo, hi, val);
@@ -80,60 +138,88 @@ public:
     LazySegmentTree(const vector< T >& arr):LazySegmentTree(arr, (int)arr.size()){}
 
     V query(int lo, int hi) {
-        assert(0 <= lo); assert(hi < (int)this -> N); assert(lo <= hi);
         return query(1, 0, this -> N - 1, lo, hi);
     }
     void assign(const vector<T>& arr){
-        assert(nodes.size() >= sgtsz(arr.size()));
         this -> N = (uint)arr.size();
         buildTree(arr, 1, 0, this -> N - 1);
     }
     void set(int index, T value) {
-        assert(0 <= index and index < this->N);
         updatePoint(1, 0, this -> N - 1, index, value);
     }
     void update(int lo, int hi, T value){
-        assert(0 <= lo); assert(hi < (int)this -> N); assert(lo <= hi);
         updateRange(1, 0, this -> N - 1, lo, hi, value);
     }
 };
 
 struct LSTNode {
 
-    int64_t sum = 0, lazy = 0;
+    int64_t sum = 0, sqSum = 0, cng = -1, inc = 0;
+
+    // sqSum 	= (a₁² + a₂² + ... + aₙ²) + 2x(a₁ + a₂ + ... + aₙ) + nx²
+	// 			= sqSum + 2Sx + nx²
 
     void propagate(uint& left, uint& right, LSTNode& LC, LSTNode& RC){
-        this -> sum += (right - left + 1) * this -> lazy;
-        if(left != right){
-            LC.lazy += (this -> lazy);
-            RC.lazy += (this -> lazy);
-        }
-        this -> lazy = 0;
+    	if(this -> cng != -1){
+    		this -> sum = this -> cng * (right - left + 1);
+    		this -> sqSum = this -> sum * this -> cng;
+    		if(left != right){
+    			LC.inc = RC.inc = 0;
+    			LC.cng = RC.cng =  this -> cng;
+    		}
+    	}
+    	if(this -> inc != 0){
+    		this -> sqSum += (2 * (this -> inc) * this ->sum) + ((right - left + 1) * (this -> inc * this -> inc));
+    		if(left != right){
+    			LC.inc += this -> inc;
+    			RC.inc += this -> inc;
+    		}
+    	}
+    	this -> cng = -1, this -> inc  = 0;
     }
     
     void updateNode(uint& left, uint& right, LSTNode& LC, LSTNode& RC, int64_t val){
-        this -> lazy += val;
+    	auto x = val & (~(1ULL << 50)) & (~(1ULL << 51));
+    	if(((val >> 50) & 1)){
+    		this -> cng = x;
+    	}else{
+			this -> inc += x;
+    	}
         this -> propagate(left, right, LC, RC);
     }
-
     void mergeNode(LSTNode& LC, LSTNode& RC) {
         this -> sum = (LC.sum + RC.sum);
+        this -> sqSum = (LC.sqSum + RC.sqSum);
     }
 
     void assignLeaf(int64_t val){
         this -> sum = val;
-        this -> lazy = 0;
+        this -> sqSum = (val * val);
     }
 };
 
 
-/**
- * 
- * @LazySegmentTree<int, LSTNode> tree(arr);
- * @Zero-based indexing for Query and Update
- * 
- * @Range Query     @tree.query(l, r);
- * @Range Update    @tree.update(l, r, value);
- * @Point Update    @tree.set(i, value);
- * 
- * */ 
+void solve([[maybe_unused]] const int& case_no){
+    int n, q;
+    read(n, q);
+    vector<int64_t>v(n);
+    read(v);
+    LazySegmentTree<int64_t, LSTNode> st(v);
+    println("Case ", case_no, ":");
+    while(q--){
+    	int op, l, r;
+    	read(op, l, r);
+    	if(op == 1){
+    		int64_t x;
+    		read( x);
+    		st.update(l - 1, r -1, x | (1ULL << 51));
+
+    	}else if(op == 0){
+    		int64_t x;
+    		read(x);
+    		st.update(l - 1, r -1, x | (1ULL << 50));
+    	}else{
+    		println(st.query(l - 1, r - 1).sqSum);
+    	}
+    }
+}

@@ -22,8 +22,18 @@ using namespace std;
 typedef long long ll;
 typedef long double ld;
 typedef pair<int, int> pii;
+inline void print(const auto& a){cout<<a;}
+inline void print(const vector<auto>& v){for(auto&i:v){print(i);print(" ");}}
+inline void print(const auto &...a) {((print(a)), ...);}
+inline void println(const auto &...a) {print(a..., '\n');}
+inline bool read(auto& x){return(cin >> x) ? true : false;}
+inline bool read(pair<auto, auto>& p){ return (read(p.first) and read(p.second));}
+inline bool read(vector<auto>& v) {bool x = true; for(auto&i:v){x&=read(i);} return x;}
+inline bool read(auto &...a) {return (((read(a))?true:false)&&...);}
+inline string kes(int k){return("Case "+to_string(k)+": ");}
+template <class T>inline T scan(){T t;read(t);return t;}
 template<class T>
-using _set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+using _set = tree<T, null_type, less_equal<T>, rb_tree_tag, tree_order_statistics_node_update>;
 void solve(const int& case_no);
 void precompute();
 signed main(){
@@ -31,8 +41,8 @@ signed main(){
     cin.tie(NULL); cout.tie(NULL);
     dbg(__init__());
     precompute();
-    bool test_case = not true;
-    int tc = 1; if(test_case){cin >> tc;}
+    bool test_case = true;
+    int tc = 1; if(test_case){read(tc);}
     for(int i = 1; i <= tc; ++i){
         dbg(__case__(i));
         solve(i);
@@ -120,31 +130,39 @@ public:
 };
 
 struct STNode {
-    int64_t optimal = -OO, prefx = -OO, suffix = -OO, total = -OO;
+    int64_t res = 0;
     void mergeNode(STNode& LC, STNode& RC) {
-        this -> total = (LC.total + RC.total);
-        this -> prefx = max(LC.total + RC.prefx, LC.prefx);
-        this -> suffix = max(RC.total + LC.suffix, RC.suffix);
-        this -> optimal = max({LC.optimal, RC.optimal, LC.suffix + RC.prefx});
+        this -> res = (LC.res + RC.res) % ((int)1e9 + 7);
     }
-    void assignLeaf(uint64_t val) {
-        this -> optimal = this -> total = this -> prefx = this -> suffix = val;
+    void assignLeaf(int64_t val) {
+        this -> res = val;
     }
 };
+
 void solve([[maybe_unused]] const int& case_no){
     int n;
-    cin >> n;
-    vector<int>v(n);
-    for(int& i : v){
-        cin >> i;
+    read(n);
+    vector<pii>v(n);
+    for(int i = 0; i < n; ++i){
+    	read(v[i].first);
+    	v[i].second = i;
     }
-    SegmentTree<int, STNode>st(v);
-    int q;
-    cin >> q;
-    while(q--){
-        int l, r;
-        cin >> l >> r;
-        --l, --r;
-        cout << st.query(l, r).optimal << "\n";
+
+    SegmentTree<int64_t, STNode> st(vector<int64_t>(n + 1, 0LL));
+    sort(all(v), [](pii a, pii b){
+    	if(a.first == b.first){
+    		return a.second > b.second;
+    	}
+    	return a.first < b.first;
+    });
+    int64_t res = 0;
+    for(int i = 0; i < n; ++i){
+
+    	// cnt of values less than this number has inserted from 0 to i
+    	int64_t ans = st.query(0, v[i].second).res;
+
+    	// this index's ans is 1 + prev ans
+    	st.update(v[i].second, ans + 1);
     }
+    println("Case ", case_no, ": ", st.query(0, n - 1).res);
 }

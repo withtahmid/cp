@@ -22,6 +22,16 @@ using namespace std;
 typedef long long ll;
 typedef long double ld;
 typedef pair<int, int> pii;
+// inline void print(const auto& a){cout<<a;}
+// inline void print(const vector<auto>& v){for(auto&i:v){print(i);print(" ");}}
+// inline void print(const auto &...a) {((print(a)), ...);}
+// inline void println(const auto &...a) {print(a..., '\n');}
+// inline bool read(auto& x){return(cin >> x) ? true : false;}
+// inline bool read(pair<auto, auto>& p){ return (read(p.first) and read(p.second));}
+// inline bool read(vector<auto>& v) {bool x = true; for(auto&i:v){x&=read(i);} return x;}
+// inline bool read(auto &...a) {return (((read(a))?true:false)&&...);}
+// inline string kes(int k){return("Case "+to_string(k)+": ");}
+// template <class T>inline T scan(){T t;read(t);return t;}
 template<class T>
 using _set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 void solve(const int& case_no);
@@ -108,43 +118,51 @@ public:
         this -> N = (uint)arr.size();
         buildTree(arr, 1, 0, this -> N - 1);
     }
-    V query(int lo, int hi) {
-        assert(0 <= lo); assert(hi < (int)this -> N); assert(lo <= hi);
+    V query(uint lo, uint hi) {
         return query(1, 0, this -> N - 1, lo, hi);
     }
 
-    void update(int index, T value) {
-        assert(0 <= index and index < (int)this -> N);
+    void update(uint index, T value) {
         update(1, 0, this -> N - 1, index, value);
     }
 };
 
 struct STNode {
-    int64_t optimal = -OO, prefx = -OO, suffix = -OO, total = -OO;
+    int64_t res = 0LL;
     void mergeNode(STNode& LC, STNode& RC) {
-        this -> total = (LC.total + RC.total);
-        this -> prefx = max(LC.total + RC.prefx, LC.prefx);
-        this -> suffix = max(RC.total + LC.suffix, RC.suffix);
-        this -> optimal = max({LC.optimal, RC.optimal, LC.suffix + RC.prefx});
+        this -> res = (LC.res + RC.res);
     }
-    void assignLeaf(uint64_t val) {
-        this -> optimal = this -> total = this -> prefx = this -> suffix = val;
+    void assignLeaf(int64_t val) {
+        this -> res = val;
     }
 };
 void solve([[maybe_unused]] const int& case_no){
-    int n;
-    cin >> n;
-    vector<int>v(n);
-    for(int& i : v){
-        cin >> i;
-    }
-    SegmentTree<int, STNode>st(v);
-    int q;
-    cin >> q;
-    while(q--){
-        int l, r;
-        cin >> l >> r;
-        --l, --r;
-        cout << st.query(l, r).optimal << "\n";
-    }
+	int n;
+	cin >> n;
+	int kes = 1;
+	while(n != 0){
+		vector<int>v(n);
+		for(int& i : v){
+			cin >> i;
+		}
+		SegmentTree<int, STNode>st(v);
+		string query;
+		cin >> query;
+		if(kes != 1){
+			cout << "\n";
+		}
+		cout << "Case " << kes++ <<":";
+		while(query != "END"){
+			int l, r;
+			cin >> l >> r;
+			if(query == "S"){
+				st.update(l - 1, r);
+			}else{
+				cout << "\n" << st.query(l - 1, r - 1).res;
+			}
+			cin >> query;
+		}
+		cout << "\n";
+		cin >> n;
+	}
 }

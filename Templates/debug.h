@@ -4,7 +4,7 @@
 using namespace __gnu_pbds;
 using namespace std;
 
-#define local(...) do{ __VA_ARGS__ ;} while(0);
+#define local(...) do{ __VA_ARGS__ ;} while(false);
 #define debug(...) cerr << "\nLine " << __LINE__ <<": [ " << #__VA_ARGS__ << " ] --> "; __dbg(__VA_ARGS__); cerr << "\n";
 auto starttime = chrono::steady_clock::now();
 
@@ -129,7 +129,31 @@ void dbg(Type value, Args... args) {
 	dbg(args...);
 }
 
+long double xMemory(string datatype, long double num_of_data, long double memory_limit_kb){
+    map<string, long double > mem_of_type = {
+        {"int", sizeof(int)},
+        {"long long", sizeof(long long)},
+        {"long double", sizeof(long double)},
+        {"double", sizeof(double)},
+        {"float", sizeof(float)},
+        {"char", sizeof(char)},
+        {"int64_t", sizeof(int64_t)},
+        {"int32_t", sizeof(int32_t)}
+    };
+    assert((mem_of_type.find(datatype) != mem_of_type.end()));
+    long double memory_requires = (num_of_data * mem_of_type[datatype]) / 1024.00;
+    return memory_requires / memory_limit_kb;
+}
 
+long double xTime(long double oprerations, long double time_lim_ms){
+    return ((oprerations / 1e5)) / (time_lim_ms);
+}
+
+string binaryOf(long long n, int digit){
+    int bit = 64;string res = string(bit, '0');
+    for(int i = 0; i < bit; ++i)res[bit - i - 1] = ((n >> i) & 1) ? '1' : '0';
+    return res.substr(bit - digit, string::npos);
+}
 
 // #include<bits/stdc++.h>
 // #define local(...) do{__VA_ARGS__;}while(0);

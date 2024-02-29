@@ -1,3 +1,61 @@
+/**
+ *
+ * Author: withtahmid
+ *
+ **/
+#include <bits/stdc++.h>
+#include<ext/pb_ds/assoc_container.hpp>
+#include<ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+using namespace std;
+#ifdef LOCAL 
+#include <debug.h>
+#else
+#define local(...) 
+#define debug(...)
+#define dbg(...)
+#endif
+#define pb push_back
+#define all(v) v.begin(),v.end()
+#define len(v) ((int) v.size())
+#define has(x, y) (x.find(y) != x.end())
+typedef long long ll;
+typedef long double ld;
+typedef pair<int, int> pii;
+inline void print(const auto& a){cout<<a;}
+inline void print(const vector<auto>& v){for(auto&i:v){print(i);print(" ");}}
+inline void print(const auto &...a) {((print(a)), ...);}
+inline void println(const auto &...a) {print(a..., '\n');}
+inline bool read(auto& x){return(cin >> x) ? true : false;}
+inline bool read(pair<auto, auto>& p){ return (read(p.first) and read(p.second));}
+inline bool read(vector<auto>& v) {bool x = true; for(auto&i:v){x&=read(i);} return x;}
+inline bool read(auto &...a) {return (((read(a))?true:false)&&...);}
+inline string kes(int k){return("Case "+to_string(k)+": ");}
+template <class T>inline T scan(){T t;read(t);return t;}
+template<class T>
+using _set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+void solve(const int& case_no);
+void precompute();
+signed main(){
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL); cout.tie(NULL);
+    dbg(__init__());
+    precompute();
+    bool test_case = true;
+    int tc = 1; if(test_case){read(tc);}
+    for(int i = 1; i <= tc; ++i){
+        dbg(__case__(i));
+        solve(i);
+    }
+    dbg(__elapsed__());
+}
+const int maxn5 = (1 * 1e5) + 69;
+const int maxn6 = (1 * 1e6) + 69;
+const int mod = (1e9 + 7); //998244353
+const int oo = ((1ULL << 31) - 1);
+const  ll OO = ((1ULL << 63) - 1);
+void precompute(){}
+void brutforce(){}
 
 
 template < class T, class V >
@@ -11,7 +69,7 @@ private:
         if (left == right) {
             return nodes[stIndex].assignLeaf(arr[left]);
         }
-        const uint lc = (stIndex << 1), rc = lc | 1, mid = ((left + right) >> 1);
+        const uint lc = (stIndex << 1), rc = lc + 1, mid = ((left + right) >> 1);
         buildTree(arr, lc, left, mid);
         buildTree(arr, rc, mid + 1, right);
         nodes[stIndex].mergeNode(nodes[lc], nodes[rc]);
@@ -27,7 +85,7 @@ private:
         if (left == lo && right == hi) {
             return nodes[stIndex];
         }
-        const uint lc = (stIndex << 1), rc = lc | 1, mid = ((left + right) >> 1);
+        const uint lc = (stIndex << 1), rc = lc + 1, mid = ((left + right) >> 1);
         if (lo > mid) {
             return query(rc, mid + 1, right, lo, hi);
         }
@@ -45,7 +103,7 @@ private:
         if (left == right) {
             return nodes[stIndex].assignLeaf(value);
         }
-        const uint lc = (stIndex << 1), rc = lc | 1, mid = ((left + right) >> 1);
+        const uint lc = (stIndex << 1), rc = lc + 1, mid = ((left + right) >> 1);
         if (index <= mid) {
             update(lc, left, mid, index, value);
         } else {
@@ -58,10 +116,10 @@ private:
         if (left > right || left > hi || right < lo){
             return;
         }
-        const uint lc = (stIndex << 1), rc = lc | 1, mid = ((left + right) >> 1);
+        const uint lc = (stIndex << 1), rc = lc + 1, mid = ((left + right) >> 1);
         if (left >= lo && right <= hi) {
             bool l = left == right;
-            return nodes[stIndex].updateNode(left, right, (l ? dmy : nodes[lc]), (l ? dmy : nodes[rc]), val);
+            return nodes[stIndex].updateLazy(left, right, (l ? dmy : nodes[lc]), (l ? dmy : nodes[rc]), val);
         }
         updateRange(lc, left, mid, lo, hi, val);
         updateRange(rc, mid + 1, right, lo, hi, val);
@@ -100,40 +158,58 @@ public:
 
 struct LSTNode {
 
-    int64_t sum = 0, lazy = 0;
+    int dig = 0, lazy = 0;
 
     void propagate(uint& left, uint& right, LSTNode& LC, LSTNode& RC){
-        this -> sum += (right - left + 1) * this -> lazy;
+  		if(this -> lazy & 1){
+  			this -> dig = 1 - this->dig;
+  		}
         if(left != right){
-            LC.lazy += (this -> lazy);
-            RC.lazy += (this -> lazy);
+           LC.lazy += this -> lazy;
+           RC.lazy += this -> lazy;
         }
         this -> lazy = 0;
     }
     
-    void updateNode(uint& left, uint& right, LSTNode& LC, LSTNode& RC, int64_t val){
-        this -> lazy += val;
-        this -> propagate(left, right, LC, RC);
+    void updateLazy(uint& left, uint& right, LSTNode& LC, LSTNode& RC, uint val){
+        this -> dig = 1 - this->dig;
+        if(left != right){
+            LC.lazy += val;
+            RC.lazy += val;
+        }
     }
 
     void mergeNode(LSTNode& LC, LSTNode& RC) {
-        this -> sum = (LC.sum + RC.sum);
+        this -> dig = (LC.dig + RC.dig);
     }
 
-    void assignLeaf(int64_t val){
-        this -> sum = val;
+    void assignLeaf(uint val){
+        this -> dig = val;
         this -> lazy = 0;
     }
 };
-
-
-/**
- * 
- * @LazySegmentTree<int, LSTNode> tree(arr);
- * @Zero-based indexing for Query and Update
- * 
- * @Range Query     @tree.query(l, r);
- * @Range Update    @tree.update(l, r, value);
- * @Point Update    @tree.set(i, value);
- * 
- * */ 
+void solve([[maybe_unused]] const int& case_no){
+	string s;
+	cin >> s;
+	vector<uint>v(len(s));
+	for(uint i = 0; i < len(s); ++i){
+		v[i] = (s[i] == '1' ? 1 : 0);
+	}
+	LazySegmentTree<uint, LSTNode> segtree(v);
+	int q;
+	cin >> q;
+	cout << "Case " << case_no <<":\n";
+	while(q--){
+		string op;
+		cin >> op;
+		if(op == "I"){
+			int l, r;
+			cin >> l >> r;
+			segtree.update(l - 1, r - 1, 1);
+		}else{
+			int i;
+			cin >> i;
+			cout << segtree.query(i - 1, i - 1).dig << "\n";
+		}
+	}
+}
