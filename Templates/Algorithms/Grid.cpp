@@ -54,11 +54,11 @@ public:
         this -> grid = v;
     }
     void dbg(){
-        for(int i = 0; i < this -> H; ++i){
-            for(int j = 0; j < this -> W; ++j){
-                cerr << this -> grid[i][j] <<" ";
-            }cerr << "\n";
-        }
+        // for(int i = 0; i < this -> H; ++i){
+        //     for(int j = 0; j < this -> W; ++j){
+        //         cerr << this -> grid[i][j] <<" ";
+        //     }cerr << "\n";
+        // }
     }
     T& at(const int i, const int j){
         return this -> grid[i][j];
@@ -140,7 +140,7 @@ public:
     pair<int, int> neighbour(const pair<int, int> p, const int d){
         return make_pair(p.first + x_dir[d], p.second + y_dir[d]);
     }
-    pair<int int> neighbour(const int i, const int j, const int d){
+    pair<int, int> neighbour(const int i, const int j, const int d){
         return this->neighbour(make_pair(i, j), d);
     }
     pair<int, int> neighbour(const pair<int, int> p, string str){
@@ -156,9 +156,6 @@ public:
         return make_pair((p.first + this -> H) % this -> H, (p.second + this -> W) % this -> W);
     }
 };
-pair<auto, auto> operator+(pair<auto, auto> a, pair<auto, auto>b){
-    return make_pair(a.first + b.first, a.second, b.second);
-}
 /**
  * Grid<char>grid(n)                        n * n
  * Grid<char>grid(n, m)                     n * m

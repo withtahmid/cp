@@ -1,3 +1,5 @@
+
+
 /**************************************************/
 template<class T, class V>
 class SegmentTree {
