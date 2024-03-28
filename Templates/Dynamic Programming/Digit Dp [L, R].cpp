@@ -2,8 +2,8 @@
 
 const int maxDigit = 22;
 int64_t dp[maxDigit][2][2]/**/;
-
-int64_t fn(const string& L, const string& R, int pos, int LT, int RT, /**/){
+memset(dp,-1, sizeof(dp));
+int64_t fn(const string& L, const string& R, int pos, int LT = 1, int RT = 1, /**/){
     if(pos == -1){
         return /**/;
     }

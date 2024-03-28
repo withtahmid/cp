@@ -1,7 +1,6 @@
 
 
-/*********/
-constexpr uint64_t mod = (1 ULL << 61) - 1;
+constexpr uint64_t mod = (1ULL << 61) - 1;
 const uint64_t seed = chrono::system_clock::now().time_since_epoch().count();
 const uint64_t base = mt19937_64(seed)() % (mod / 3) + (mod / 3);
 

@@ -107,7 +107,7 @@ NOW = datetime.now()
 ####################  Make Customizations  here#########################
 
 ## the the template files path whic you want to replicate everytime, an be global path or relative to cwd
-template_path = "./Templates/Template.cpp"
+template_path = "./Templates/CFTemplate.cpp"
 ## change to .java for java (or anything)
 extension = ".cpp"
 
@@ -244,8 +244,8 @@ def run():
 
 	if platform == "clear":
 		clear(os.getcwd(), args.__dict__[platform])
-
 		return
+
 	add = ""
 	div = ""
 	for i in additional:
@@ -280,9 +280,7 @@ def run():
 		if input(warning_text) not in agree:
 			print(f"[ MESSAGE ] Program terminated")
 			return
-
-
-
+			
 	lines = get_template(template_path)
 
 	path.mkdir(parents=True, exist_ok=True)

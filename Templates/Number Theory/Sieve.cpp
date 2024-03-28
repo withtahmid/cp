@@ -1,5 +1,6 @@
+
 vector<int> isPrime;
-void sieve(const int N){
+void sieve(const int N = 1000000){
 	isPrime.resize(N + 69, true);
 	isPrime[1] = false;
 	for(int i = 4; i <= N; i += 2){
@@ -11,3 +12,4 @@ void sieve(const int N){
 		}
 	}
 }
+

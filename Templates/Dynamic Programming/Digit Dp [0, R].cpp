@@ -2,7 +2,7 @@
 
 const int maxDigit = 22;
 int64_t dp[maxDigit][2]/**/;
-
+memset(dp,-1, sizeof(dp));
 int64_t fn(const string& s, int pos, int tight /**/){
     if(pos == -1){
         return /**/;
@@ -14,7 +14,7 @@ int64_t fn(const string& s, int pos, int tight /**/){
     res = 0;
     int hi = tight ? s[pos] - '0' : 9;
     for(int i = 0; i <= hi; ++i){
-        res += fn(s, pos - 1,, (tight&&(i==hi)), /**/);
+        res += fn(s, pos - 1,(tight&&(i==hi)), /**/);
     }
     return res;
 }

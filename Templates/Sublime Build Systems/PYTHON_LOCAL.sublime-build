@@ -1,0 +1,5 @@
+{
+  "shell_cmd": "python3 '${file}' < '/home/withtahmid/cp/IOFiles/input.txt' > '/home/withtahmid/cp/IOFiles/output.txt' 2> '/home/withtahmid/cp/IOFiles/error.txt'",
+  "selector": "source.python",
+  "working_dir": "$file_path"
+}
