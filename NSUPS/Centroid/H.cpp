@@ -1,3 +1,11 @@
+#include <bits/stdc++.h>
+using namespace std;
+#ifdef LOCAL  
+#include <debug.h>
+#else
+#define dbg(...)
+#endif
+
 template < class T, class V >
 class SegmentTree {
 private:
@@ -53,7 +61,7 @@ public:
     SegmentTree(const vector<T>& arr):SegmentTree(arr, (int) arr.size()){}
     SegmentTree(const int sz){
         this -> N = sz;
-        this -> nodes = vector<V>(sgtsz(sz));
+        nodes.resize(sgtsz(this -> N) + 5);
     }
     void assign(const vector<T>& arr){
         assert(nodes.size() >= sgtsz(arr.size()));
@@ -81,10 +89,81 @@ struct STNode {
     }
 };
 
-/**
- * 
- * @SegmentTree<int, STNode> tree(v);
- * @Range Query @tree.query(l, r);
- * @Point Update @tree.update(i, value);
- * 
- * */ 
+const int N = 2e5 + 69;
+vector<int>adj[N];
+int timer = 0, dfs_order[N], child_cnt[N];
+void dfs(int u = 0, int par = -1){
+    dfs_order[u] = timer++;
+    child_cnt[u] = 1;
+    for(int v : adj[u]){
+        if(v != par){
+            dfs(v, u);
+            child_cnt[u] += child_cnt[v];
+        }
+    }
+}
+
+int point(const int node){
+    return dfs_order[node];
+}
+
+pair<int, int> range(const int node){
+    return make_pair(dfs_order[node], dfs_order[node] + child_cnt[node] - 1);
+}
+
+void generate_order(vector<auto>& ordered_arr, vector<auto>& value_arr){
+    assert(ordered_arr.size() == value_arr.size());
+    for(int i = 0; i < int(value_arr.size()); ++i){
+        ordered_arr[dfs_order[i]] = value_arr[i];
+    }
+}
+
+
+void solve(const int& tc){
+    int n, q;
+    cin >> n >> q;
+    vector<int64_t>arr(n);
+    for(int i = 0; i < n; ++i){
+        cin >> arr[i];
+    }
+    for(int i = 0; i + 1 < n; ++i){
+        int u, v;
+        cin >> u >> v;
+        --u, --v;
+        adj[u].emplace_back(v), adj[v].emplace_back(u);
+    }
+    
+    dfs();
+    
+    vector<int64_t>v(n);
+    generate_order(v, arr);
+
+    SegmentTree<int64_t, STNode> st(v);
+
+    while(q--){
+        int op;
+        cin >> op;
+        if(op == 1){
+            int u, val;
+            cin >> u >> val;
+            --u;
+            st.update(point(u), val);
+        }else{
+            int u;
+            cin >> u;
+            --u;
+            auto [l, r] = range(u);
+            cout << st.query(l, r).res << '\n';
+        }
+    }
+}
+
+
+int32_t main(){
+    ios_base::sync_with_stdio(0), cin.tie(0);
+    int t = 1;
+    // cin >> t;
+    for(int tc = 1; tc <= t; ++tc){
+        solve(tc);
+    }
+}

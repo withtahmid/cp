@@ -6,9 +6,8 @@ using namespace std;
 #define dbg(...)
 #endif
 
-
 void solve(const int& tc){
-
+    dbg(xTime(1e10, 1000));    
 }
 
 

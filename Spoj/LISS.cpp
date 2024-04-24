@@ -1,3 +1,13 @@
+#include <bits/stdc++.h>
+using namespace std;
+#ifdef LOCAL  
+#include <debug.h>
+#else
+#define dbg(...)
+#endif
+
+const int N = 1e5 + 69, mod = 1000000007;
+
 template < class T, class V >
 class SegmentTree {
 private:
@@ -53,7 +63,7 @@ public:
     SegmentTree(const vector<T>& arr):SegmentTree(arr, (int) arr.size()){}
     SegmentTree(const int sz){
         this -> N = sz;
-        this -> nodes = vector<V>(sgtsz(sz));
+        nodes.resize(sgtsz(this -> N) + 5);
     }
     void assign(const vector<T>& arr){
         assert(nodes.size() >= sgtsz(arr.size()));
@@ -71,20 +81,71 @@ public:
     }
 };
 
-struct STNode {
+struct CNT {
     int64_t res = 0LL;
-    void mergeNode(STNode& LC, STNode& RC) {
-        this -> res = (LC.res + RC.res);
+    void mergeNode(CNT& LC, CNT& RC) {
+        this -> res = (LC.res + RC.res) % mod;
     }
     void assignLeaf(int64_t val) {
         this -> res = val;
     }
 };
 
-/**
- * 
- * @SegmentTree<int, STNode> tree(v);
- * @Range Query @tree.query(l, r);
- * @Point Update @tree.update(i, value);
- * 
- * */ 
+struct MAX {
+    int res = 0LL;
+    void mergeNode(MAX& LC, MAX& RC) {
+        this -> res = max(LC.res, RC.res);
+    }
+    void assignLeaf(int val) {
+        this -> res = val;
+    }
+};
+
+vector<int>t(int(N), 0);
+
+int n;
+
+void run_case(){
+    vector<pair<int, int>> a(n);
+    vector<int>dp(n, 0), dp2(n, 0);
+    for(int i = 0; i < n; ++i){
+        cin >> a[i].first, a[i].second = i; 
+    }
+
+    auto b = a;
+    reverse(b.begin(), b.end());
+    SegmentTree<int, MAX> mx(t), mx2(t);
+    
+    for(int i = 0; i < n; ++i){
+        int res_1 = mx.query(0, a[i].first - 1).res;
+        dp[i] = res_1 + 1;
+        mx.update(a[i].first, dp[i]);
+
+        int res_2 = mx2.query(0, b[i].first - 1).res;
+        dp2[i] = res_2 + 1;
+        mx2.update(b[i].first, dp2[i]);
+    }
+    reverse(dp2.begin(), dp2.end());
+    int res = 1;
+    for(int i = 0; i <= n; ++i){
+        if(dp[i] == dp2[i]){
+            res = max(res, dp[i]);
+        }
+    }
+    cout << (2 * res) - 1 << '\n';
+} 
+
+void solve(int& tc){
+    while(cin >> n){
+        run_case();
+    }
+}
+
+int32_t main(){
+    ios_base::sync_with_stdio(0), cin.tie(0);
+    int t = 1;
+    // cin >> t;
+    for(int tc = 1; tc <= t; ++tc){
+        solve(tc);
+    }
+}

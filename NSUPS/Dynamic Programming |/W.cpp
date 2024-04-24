@@ -1,3 +1,11 @@
+#include <bits/stdc++.h>
+using namespace std;
+#ifdef LOCAL  
+#include <debug.h>
+#else
+#define dbg(...)
+#endif
+
 template < class T, class V >
 class SegmentTree {
 private:
@@ -56,35 +64,93 @@ public:
         this -> nodes = vector<V>(sgtsz(sz));
     }
     void assign(const vector<T>& arr){
-        assert(nodes.size() >= sgtsz(arr.size()));
         this -> N = (int)arr.size();
         buildTree(arr, 1, 0, this -> N - 1);
     }
     V query(int lo, int hi) {
-        assert(0 <= lo); assert(hi < (int)this -> N); assert(lo <= hi);
         return query(1, 0, this -> N - 1, lo, hi);
     }
 
     void update(int index, T value) {
-        assert(0 <= index and index < (int)this -> N);
         update(1, 0, this -> N - 1, index, value);
     }
 };
 
 struct STNode {
-    int64_t res = 0LL;
+    int res = 0LL;
     void mergeNode(STNode& LC, STNode& RC) {
-        this -> res = (LC.res + RC.res);
+        this -> res = max(LC.res, RC.res);
     }
-    void assignLeaf(int64_t val) {
+    void assignLeaf(int val) {
         this -> res = val;
     }
 };
 
-/**
- * 
- * @SegmentTree<int, STNode> tree(v);
- * @Range Query @tree.query(l, r);
- * @Point Update @tree.update(i, value);
- * 
- * */ 
+
+const int N = 1e5 + 69;
+int fr_dp[N], rv_dp[N];
+
+void lis_table(vector<int>& v){
+    
+    const int n = int(v.size());
+    
+    vector<pair<int, int>> a(n), b(n);
+    
+    for(int i = 0; i < n; ++i){
+        a[i].first = v[i], a[i].second = i; 
+        b[i].first = v[i], b[i].second = n - i - 1; 
+    }
+
+    auto srt = [](vector<pair<int, int>>& v){
+        sort(v.begin(), v.end(), [&](pair<int, int> x, pair<int, int> y){
+            if(x.first == y.first){
+                return x.second > y.second;
+            }
+            return x.first < y.first;
+        });
+    };
+
+    srt(a),  srt(b);
+
+    SegmentTree<int, STNode> fr_sgTree(n), rv_sgTree(n);
+    
+    for(int i = 0; i < n; ++i){
+        
+        int fr_res = fr_sgTree.query(0, a[i].second).res;
+        fr_dp[a[i].second] = fr_res + 1;
+        fr_sgTree.update(a[i].second, fr_dp[a[i].second]);
+
+        int rv_res = rv_sgTree.query(0, b[i].second).res;
+        rv_dp[n - b[i].second - 1] = rv_res + 1;
+        rv_sgTree.update(b[i].second, rv_dp[n - b[i].second - 1]);
+    }
+} 
+
+void solve(int& tc){
+    int n;
+    while(cin >> n){
+
+        vector<int>v(n);
+        for(int& i :  v){
+            cin >> i;
+        }
+
+        lis_table(v);
+
+        int res = 0;
+        for(int i = 0; i < n; ++i){
+            res = max(res, (min(fr_dp[i], rv_dp[i]) * 2) - 1);
+        }
+        
+        cout << res << '\n';
+    }
+}
+
+int32_t main(){
+    ios_base::sync_with_stdio(0), cin.tie(0);
+    int t = 1;
+    // cin >> t;
+    for(int tc = 1; tc <= t; ++tc){
+        solve(tc);
+    }
+}

@@ -24,8 +24,13 @@ vector<int> primeFactors(int n){
     vector<int> factors;
     for(const int& p : primes){
         if(p * p > n) break;
-        while(n % p == 0) n /= p, factors.emplace_back(p);
+        while(n % p == 0){
+            n /= p;
+            factors.emplace_back(p);
+        }
     }
-    if(n != 1) factors.emplace_back(n);
+    if(n != 1){
+        factors.emplace_back(n);
+    }
     return factors;
 }
