@@ -13,7 +13,19 @@ typedef long double ld;
 typedef pair<int, int> pii;
 
 void solve(const int& case_no){
-    
+    int n;
+    cin >> n;
+    vector<int>v(n);
+    for(int& i : v){
+        cin >> i;
+    }
+    for(int i = 1; i < n; ++i){
+        if(v[i] > v[ 0 ]){
+            cout << i + 1 << '\n';
+            return;
+        }
+    }
+    cout << "-1\n"; 
 }
 
 int32_t main(){
