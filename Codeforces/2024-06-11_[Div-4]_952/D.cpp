@@ -13,7 +13,24 @@ typedef long double ld;
 typedef pair<int, int> pii;
 
 void solve(const int& tc){
+    int n, m;
+    cin >> n >> m;
     
+    vector<string>grid(n);
+    
+    for(int i = 0; i < n; ++i){
+        cin >> grid[i];
+    }
+
+    int top = n, bottom = 1, y;
+    
+    for(int i = 0; i < n; ++i){
+        if(count(all(grid[i]), '#') == 1){
+            top = min(top, i + 1), bottom = max(bottom, i + 1), y = grid[i].find('#') + 1;
+        }
+    }
+
+    cout << ((bottom - top ) / 2) + top << " " << y << '\n';
 }
 
 int32_t main(){

@@ -12,8 +12,24 @@ using namespace std;
 typedef long double ld;
 typedef pair<int, int> pii;
 
+const int N = 2e5;
+static int n, a[N];
+
 void solve(const int& tc){
+    cin >> n;
+    for(int i = 0; i < n; ++i){
+        cin >> a[i];
+    }
     
+    multiset<int>st;
+    
+    int64_t tot = 0, res = 0;
+    
+    for(int i = 0; i < n; ++i){
+        st.insert(a[i]), tot += a[i], res += (*st.rbegin() == (tot - *st.rbegin()));
+    }
+
+    cout << res << '\n';
 }
 
 int32_t main(){

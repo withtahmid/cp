@@ -13,7 +13,13 @@ typedef long double ld;
 typedef pair<int, int> pii;
 
 void solve(const int& tc){
-    
+    int a, b;
+    cin >> a >> b;
+    int res = INT_MAX;
+    for(int c = a; c <= b; ++c){
+        res = min(res, (c - a) + (b - c));
+    }
+    cout << res << "\n";
 }
 
 int32_t main(){

@@ -190,8 +190,24 @@ public:
 const vector<int> x_dir8 = { -1, -1, -1,  0,  0, +1, +1, +1 };
 const vector<int> y_dir8 = { -1,  0, +1, -1, +1, -1,  0, +1 };
 
-const vector<int> x_dir4 = {  0, -1,  0, +1 };
-const vector<int> y_dir4 = { -1,  0, +1,  0 };
+/*
+                        .X. ... ... ...
+                        .#. .#X .#. X#.
+                        ... ... .X. ...
+*/ 
+
+
+
+const int x_dir[] = { +0, +1, +0, -1 };
+const int y_dir[] = { -1, +0, +1, +0 };
+
+/*
+                        .X. ... ... ...
+                        .#. .#X .#. X#.
+                        ... ... .X. ...
+*/ 
+
+
 const vector<string> dir_arr = {"L", "U", "R", "D", /* "TL", "TR", "BL", "BR" */ };
 
 /*********/ 

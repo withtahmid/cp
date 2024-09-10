@@ -18,7 +18,11 @@ string kes(int case_no){return string(case_no > 1 ? "\n" : "") + string("---- Ca
 inline void __dbg(){}
 inline void __dbg(const bool& x){cerr << (x ? "true" : "false");}
 inline void __dbg(const auto& x){cerr << x;}
-inline void __dbg(const pair<auto, auto>& p){ __dbg("{ ", p.first, ", ", p.second, " }");}
+
+inline void __dbg(const pair<auto, auto>& p){
+ // __dbg("{ ", p.first, ", ", p.second, " }");
+ cerr << "{" << p.first << " " << p.second << " }";
+}
 inline void __dbg(const vector<auto>& v){__dbg("[ ");for(const auto& i : v){__dbg(i);__dbg(" ");}__dbg("]");}
 inline void __dbg(stack<auto> stk){ __dbg("[ "); while(not stk.empty()){__dbg(stk.top());__dbg(" ");stk.pop();}__dbg("]");}
 inline void __dbg(queue<auto> q){__dbg("[ ");while(not q.empty()){__dbg(q.front());__dbg(" ");q.pop();}__dbg("]");}

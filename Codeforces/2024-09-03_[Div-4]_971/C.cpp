@@ -6,18 +6,14 @@ using namespace std;
 #define dbg(...)
 #endif
 
-#define all(v) v.begin(),v.end()
-#define len(v) ((int) v.size())
-#define int int64_t
-typedef long double ld;
-typedef pair<int, int> pii;
-
 void solve(const int& tc){
-    
+    int64_t x, y, k;
+    cin >> x >> y >> k;
+    cout << max((2 * (( x + k - 1) / k)) - 1, 2 * ((y + k - 1) / k)) << '\n';
 }
 
 int32_t main(){
-    ios_base::sync_with_stdio(0), cin.tie(0); 
+    ios_base::sync_with_stdio(0), cin.tie(0);
     dbg(ok());
     int t = 1;
     cin >> t;

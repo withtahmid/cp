@@ -8,12 +8,21 @@ using namespace std;
 
 #define all(v) v.begin(),v.end()
 #define len(v) ((int) v.size())
+#define has(v, x) ((v.find(x) != v.end()))
 #define int int64_t
 typedef long double ld;
 typedef pair<int, int> pii;
 
+
+
 void solve(const int& tc){
-    
+    int n;
+    string s;
+    cin >> n >> s;
+    auto t = s;
+    sort(all(t));
+    cout << (t == s ? "YES" : "NO") << '\n';
+
 }
 
 int32_t main(){

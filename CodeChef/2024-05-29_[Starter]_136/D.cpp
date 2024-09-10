@@ -8,6 +8,7 @@ using namespace std;
 
 #define all(v) v.begin(),v.end()
 #define len(v) ((int) v.size())
+#define has(v, x) ((v.find(x) != v.end()))
 #define int int64_t
 typedef long double ld;
 typedef pair<int, int> pii;

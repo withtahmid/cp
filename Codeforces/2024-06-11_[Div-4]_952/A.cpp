@@ -6,24 +6,15 @@ using namespace std;
 #define dbg(...)
 #endif
 
-#define all(v) v.begin(),v.end()
-#define len(v) ((int) v.size())
-#define int int64_t
-typedef long double ld;
-typedef pair<int, int> pii;
-
 void solve(const int& tc){
-    
+    dbg(60 * 60 * 24 * 365);
 }
 
 int32_t main(){
     ios_base::sync_with_stdio(0), cin.tie(0); 
-    dbg(ok());
     int t = 1;
     cin >> t;
     for(int tc = 1; tc <= t; ++tc){
-        dbg(kes(tc));
         solve(tc);
     }
-    dbg(bye());
 }
